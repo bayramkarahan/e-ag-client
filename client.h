@@ -8,6 +8,7 @@
 #include<QUdpSocket>
 #include<QNetworkInterface>
 #include<QProcess>
+#include<QObject>
 class IpMac
 {
 public:
@@ -18,15 +19,14 @@ public:
 
 };
 
-class Client
+class Client: public QObject
 {
-  //Q_OBJECT
+  Q_OBJECT
 public:
     Client();
     ~Client();
 signals:
   public slots:
-
     QStringList listRemove(QStringList list,QString data);
     QStringList fileToList(QString path,QString filename);
     void listToFile(QString path,QStringList list, QString filename);
@@ -37,8 +37,10 @@ signals:
 private slots:
      void commandExecuteSlot(QString command,QString username,QString password);
     void udpSocketGetRead();
+     void udpSocketGetMyDispRead();
+      void udpSocketGetMyEnvRead();
     void udpSocketSendTServer(QString _data);
-    void timerControlSlot();
+   // void timerControlSlot();
     void hostAddressMacButtonSlot();
     void webBlockAktifPasif();
     //QString getIpPort///Status(QString ip_,QString prt);
@@ -59,7 +61,11 @@ private:
     QString tcpPort;
     QUdpSocket *udpSocketSend = nullptr;
     QUdpSocket *udpSocketGet = nullptr;
-
+    QUdpSocket *udpSocketGetMyDisp = nullptr;
+    QUdpSocket *udpSocketGetMyEnv = nullptr;
+    QUdpSocket *udpSocketSendX11Mesaj = nullptr;
+    QString x11env="";
+    QString myenv="";
 };
 
 #endif // CLIENT_H

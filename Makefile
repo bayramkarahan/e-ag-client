@@ -14,10 +14,10 @@ EQ            = =
 
 CC            = gcc
 CXX           = g++
-DEFINES       = -DQT_DEPRECATED_WARNINGS -DQT_NO_DEBUG -DQT_NETWORK_LIB -DQT_CORE_LIB
+DEFINES       = -DQT_DEPRECATED_WARNINGS -DQT_NO_DEBUG -DQT_NETWORK_LIB -DQT_DBUS_LIB -DQT_CORE_LIB
 CFLAGS        = -pipe -O2 -Wall -Wextra -D_REENTRANT -fPIC $(DEFINES)
 CXXFLAGS      = -pipe -O2 -std=gnu++11 -Wall -Wextra -D_REENTRANT -fPIC $(DEFINES)
-INCPATH       = -I. -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++
+INCPATH       = -I. -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtDBus -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++
 QMAKE         = /usr/lib/qt5/bin/qmake
 DEL_FILE      = rm -f
 CHK_DIR_EXISTS= test -d
@@ -37,10 +37,10 @@ MOVE          = mv -f
 TAR           = tar -cf
 COMPRESS      = gzip -9f
 DISTNAME      = e-ag-client1.0.0
-DISTDIR = /home/by/Masaüstü/e-ag-client/.tmp/e-ag-client1.0.0
+DISTDIR = /home/by/Masaüstü/client/e-ag-client/.tmp/e-ag-client1.0.0
 LINK          = g++
 LFLAGS        = -Wl,-O1
-LIBS          = $(SUBLIBS) /usr/lib/x86_64-linux-gnu/libQt5Network.so /usr/lib/x86_64-linux-gnu/libQt5Core.so -lpthread   
+LIBS          = $(SUBLIBS) /usr/lib/x86_64-linux-gnu/libQt5Network.so /usr/lib/x86_64-linux-gnu/libQt5DBus.so /usr/lib/x86_64-linux-gnu/libQt5Core.so -lpthread   
 AR            = ar cqs
 RANLIB        = 
 SED           = sed
@@ -54,10 +54,12 @@ OBJECTS_DIR   = ./
 
 SOURCES       = main.cpp \
 		client.cpp \
-		singleinstance.cpp moc_singleinstance.cpp
+		singleinstance.cpp moc_client.cpp \
+		moc_singleinstance.cpp
 OBJECTS       = main.o \
 		client.o \
 		singleinstance.o \
+		moc_client.o \
 		moc_singleinstance.o
 DIST          = e-ag-client.service \
 		e-ag-x11vncdesktop.service \
@@ -129,7 +131,6 @@ DIST          = e-ag-client.service \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/qt_config.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++/qmake.conf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_post.prf \
-		.qmake.stash \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/exclusive_builds.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/toolchain.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/default_pre.prf \
@@ -140,6 +141,9 @@ DIST          = e-ag-client.service \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/resources_functions.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/resources.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/moc.prf \
+		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/dbuscommon.pri \
+		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/dbusinterfaces.prf \
+		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/dbusadaptors.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/unix/thread.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/qmake_use.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/file_copies.prf \
@@ -227,7 +231,6 @@ Makefile: e-ag-client.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++/qmake.
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/qt_config.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++/qmake.conf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_post.prf \
-		.qmake.stash \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/exclusive_builds.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/toolchain.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/default_pre.prf \
@@ -238,6 +241,9 @@ Makefile: e-ag-client.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++/qmake.
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/resources_functions.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/resources.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/moc.prf \
+		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/dbuscommon.pri \
+		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/dbusinterfaces.prf \
+		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/dbusadaptors.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/unix/thread.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/qmake_use.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/file_copies.prf \
@@ -311,7 +317,6 @@ Makefile: e-ag-client.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++/qmake.
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/qt_config.prf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++/qmake.conf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_post.prf:
-.qmake.stash:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/exclusive_builds.prf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/toolchain.prf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/default_pre.prf:
@@ -322,6 +327,9 @@ Makefile: e-ag-client.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++/qmake.
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/resources_functions.prf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/resources.prf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/moc.prf:
+/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/dbuscommon.pri:
+/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/dbusinterfaces.prf:
+/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/dbusadaptors.prf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/unix/thread.prf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/qmake_use.prf:
 /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/file_copies.prf:
@@ -378,13 +386,19 @@ compiler_moc_predefs_clean:
 moc_predefs.h: /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp
 	g++ -pipe -O2 -std=gnu++11 -Wall -Wextra -dM -E -o moc_predefs.h /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp
 
-compiler_moc_header_make_all: moc_singleinstance.cpp
+compiler_moc_header_make_all: moc_client.cpp moc_singleinstance.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_singleinstance.cpp
+	-$(DEL_FILE) moc_client.cpp moc_singleinstance.cpp
+moc_client.cpp: client.h \
+		filecrud.h \
+		moc_predefs.h \
+		/usr/lib/qt5/bin/moc
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/by/Masaüstü/client/e-ag-client/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/by/Masaüstü/client/e-ag-client -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtDBus -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/10 -I/usr/include/x86_64-linux-gnu/c++/10 -I/usr/include/c++/10/backward -I/usr/lib/gcc/x86_64-linux-gnu/10/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include client.h -o moc_client.cpp
+
 moc_singleinstance.cpp: singleinstance.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/by/Masaüstü/e-ag-client/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/by/Masaüstü/e-ag-client -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/8 -I/usr/include/x86_64-linux-gnu/c++/8 -I/usr/include/c++/8/backward -I/usr/lib/gcc/x86_64-linux-gnu/8/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/8/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include singleinstance.h -o moc_singleinstance.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/by/Masaüstü/client/e-ag-client/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/by/Masaüstü/client/e-ag-client -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtDBus -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/10 -I/usr/include/x86_64-linux-gnu/c++/10 -I/usr/include/c++/10/backward -I/usr/lib/gcc/x86_64-linux-gnu/10/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include singleinstance.h -o moc_singleinstance.cpp
 
 compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:
@@ -412,6 +426,9 @@ client.o: client.cpp client.h \
 singleinstance.o: singleinstance.cpp singleinstance.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o singleinstance.o singleinstance.cpp
 
+moc_client.o: moc_client.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_client.o moc_client.cpp
+
 moc_singleinstance.o: moc_singleinstance.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_singleinstance.o moc_singleinstance.cpp
 
@@ -429,7 +446,7 @@ uninstall_target: FORCE
 
 install_service: first FORCE
 	@test -d $(INSTALL_ROOT)/lib/systemd/system/ || mkdir -p $(INSTALL_ROOT)/lib/systemd/system/
-	$(QINSTALL_PROGRAM) /home/by/Masaüstü/e-ag-client/e-ag-client.service $(INSTALL_ROOT)/lib/systemd/system/e-ag-client.service
+	$(QINSTALL_PROGRAM) /home/by/Masaüstü/client/e-ag-client/e-ag-client.service $(INSTALL_ROOT)/lib/systemd/system/e-ag-client.service
 	-: $(INSTALL_ROOT)/lib/systemd/system/e-ag-client.service
 
 uninstall_service: FORCE
@@ -439,7 +456,7 @@ uninstall_service: FORCE
 
 install_x11servicedesktop: first FORCE
 	@test -d $(INSTALL_ROOT)/lib/systemd/system/ || mkdir -p $(INSTALL_ROOT)/lib/systemd/system/
-	$(QINSTALL) /home/by/Masaüstü/e-ag-client/e-ag-x11vncdesktop.service $(INSTALL_ROOT)/lib/systemd/system/e-ag-x11vncdesktop.service
+	$(QINSTALL) /home/by/Masaüstü/client/e-ag-client/e-ag-x11vncdesktop.service $(INSTALL_ROOT)/lib/systemd/system/e-ag-x11vncdesktop.service
 
 uninstall_x11servicedesktop: FORCE
 	-$(DEL_FILE) -r $(INSTALL_ROOT)/lib/systemd/system/e-ag-x11vncdesktop.service
@@ -448,7 +465,7 @@ uninstall_x11servicedesktop: FORCE
 
 install_x11servicelogin: first FORCE
 	@test -d $(INSTALL_ROOT)/lib/systemd/system/ || mkdir -p $(INSTALL_ROOT)/lib/systemd/system/
-	$(QINSTALL) /home/by/Masaüstü/e-ag-client/e-ag-x11vnclogin.service $(INSTALL_ROOT)/lib/systemd/system/e-ag-x11vnclogin.service
+	$(QINSTALL) /home/by/Masaüstü/client/e-ag-client/e-ag-x11vnclogin.service $(INSTALL_ROOT)/lib/systemd/system/e-ag-x11vnclogin.service
 
 uninstall_x11servicelogin: FORCE
 	-$(DEL_FILE) -r $(INSTALL_ROOT)/lib/systemd/system/e-ag-x11vnclogin.service
@@ -457,7 +474,7 @@ uninstall_x11servicelogin: FORCE
 
 install_x11passwd: first FORCE
 	@test -d $(INSTALL_ROOT)/usr/bin/ || mkdir -p $(INSTALL_ROOT)/usr/bin/
-	$(QINSTALL_PROGRAM) /home/by/Masaüstü/e-ag-client/x11vncpasswd $(INSTALL_ROOT)/usr/bin/x11vncpasswd
+	$(QINSTALL_PROGRAM) /home/by/Masaüstü/client/e-ag-client/x11vncpasswd $(INSTALL_ROOT)/usr/bin/x11vncpasswd
 	-: $(INSTALL_ROOT)/usr/bin/x11vncpasswd
 
 uninstall_x11passwd: FORCE
@@ -467,7 +484,7 @@ uninstall_x11passwd: FORCE
 
 install_runfile: first FORCE
 	@test -d $(INSTALL_ROOT)/usr/bin/ || mkdir -p $(INSTALL_ROOT)/usr/bin/
-	$(QINSTALL_PROGRAM) /home/by/Masaüstü/e-ag-client/e-ag-run.sh $(INSTALL_ROOT)/usr/bin/e-ag-run.sh
+	$(QINSTALL_PROGRAM) /home/by/Masaüstü/client/e-ag-client/e-ag-run.sh $(INSTALL_ROOT)/usr/bin/e-ag-run.sh
 	-: $(INSTALL_ROOT)/usr/bin/e-ag-run.sh
 
 uninstall_runfile: FORCE
@@ -477,7 +494,7 @@ uninstall_runfile: FORCE
 
 install_webdisablefile: first FORCE
 	@test -d $(INSTALL_ROOT)/usr/share/e-ag/ || mkdir -p $(INSTALL_ROOT)/usr/share/e-ag/
-	$(QINSTALL_PROGRAM) /home/by/Masaüstü/e-ag-client/webdisable.sh $(INSTALL_ROOT)/usr/share/e-ag/webdisable.sh
+	$(QINSTALL_PROGRAM) /home/by/Masaüstü/client/e-ag-client/webdisable.sh $(INSTALL_ROOT)/usr/share/e-ag/webdisable.sh
 	-: $(INSTALL_ROOT)/usr/share/e-ag/webdisable.sh
 
 uninstall_webdisablefile: FORCE

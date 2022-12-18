@@ -4,6 +4,11 @@
 #include <QDir>
 #include<QDebug>
 #include<singleinstance.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <QtCore/QCoreApplication>
+#include <QtDBus/QtDBus>
+
 #define SINGLE_INSTANCE ".Client"
 
 int main(int argc, char *argv[])
