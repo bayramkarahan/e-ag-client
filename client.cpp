@@ -19,8 +19,6 @@ Client::Client()
     QString kmt26="rm -rf "+localDir+"kilitopen";
     system(kmt26.toStdString().c_str());
 
-    QString kmt27="rm -rf "+localDir1+"mydisp";
-    system(kmt27.toStdString().c_str());
 
 /************************************************/
     QTimer *tcpMesajSendTimer = new QTimer();
@@ -174,23 +172,24 @@ void Client::udpSocketGetMyEnvRead()
           //    x11env=x11env;
          // QString result1=arg;
           bool sshState;
-          bool vncState;
+          int vncState;
           bool ftpState;
-           /*************************************/
-                if (getIpPortStatus("systemctl status ssh.service|grep 'running'|wc -l")=="open")
-                    sshState=true;
-                else sshState=false;
-             /*************************************/
-              if (getIpPortStatus("systemctl status e-ag-x11vncdesktop.service|grep 'running'|wc -l")=="open"||
-                       getIpPortStatus("systemctl status e-ag-x11vnclogin.service|grep 'running'|wc -l")=="open")
-                   vncState=true;
-               else vncState=false;
-               /*************************************/
-               if (getIpPortStatus("systemctl status vsftpd.service|grep 'running'|wc -l")=="open")
-                   ftpState=true;
-               else ftpState=false;
-            /*************************************/
-               /// qDebug()<<"durum:"<<x11env<<result1;
+          /*************************************/
+          if (getIpPortStatus("systemctl status ssh.service|grep 'running'|wc -l")=="open")
+              sshState=true;
+          else sshState=false;
+          /*************************************/
+          if (getIpPortStatus("systemctl status e-ag-x11vncdesktop.service|grep '5900'|wc -l")=="open")
+              vncState=5900;
+          else if (getIpPortStatus("systemctl status e-ag-x11vnclogin.service|grep '5902'|wc -l")=="open")
+              vncState=5902;
+          else vncState=0;
+          /*************************************/
+          if (getIpPortStatus("systemctl status vsftpd.service|grep 'running'|wc -l")=="open")
+              ftpState=true;
+          else ftpState=false;
+          /*************************************/
+          /// qDebug()<<"durum:"<<x11env<<result1;
 
                udpSocketSendTServer("portStatus|mydisp|"+x11env+"|"+myenv+"|"+QString::number(sshState)+"|"+QString::number(vncState)+"|"+QString::number(ftpState));
 x11env="";
