@@ -27,7 +27,7 @@ Client::Client()
 
 tcpMesajSendTimerSlot();
     });
-    tcpMesajSendTimer->start(10000);
+    tcpMesajSendTimer->start(3000);
 
 
     /***********************************/
@@ -190,10 +190,25 @@ void Client::udpSocketGetMyEnvRead()
           else ftpState=false;
           /*************************************/
           /// qDebug()<<"durum:"<<x11env<<result1;
+          QString data="portStatus|mydisp|"+x11env+"|"+myenv+"|"+QString::number(sshState)+"|"+QString::number(vncState)+"|"+QString::number(ftpState);
+          if(tempdata!=data)
+          {
+              udpSocketSendTServer(data);
+              tempdata=data;
+              dataSayac=0;
+          }
+          else dataSayac++;
+          if(dataSayac>10)
+          {
+              udpSocketSendTServer(data);
+              tempdata=data;
+              dataSayac=0;
+          }
 
-               udpSocketSendTServer("portStatus|mydisp|"+x11env+"|"+myenv+"|"+QString::number(sshState)+"|"+QString::number(vncState)+"|"+QString::number(ftpState));
-x11env="";
-myenv="";
+          data="";
+          x11env="";
+          myenv="";
+
 
     }
 }

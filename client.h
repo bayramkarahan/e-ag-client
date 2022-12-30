@@ -51,12 +51,9 @@ private:
     QProcess process;
     QTimer *timer;
     QTimer *timerControl;
-    //QTcpSocket* socket;
-   // QString myIpAddress;
-    //QString myMacAddress;
     QList<IpMac> ipmaclist;
     QString localDir;
-     QString localDir1;
+    QString localDir1;
     QString ip;
     QString tcpPort;
     QUdpSocket *udpSocketSend = nullptr;
@@ -66,6 +63,8 @@ private:
     QUdpSocket *udpSocketSendX11Mesaj = nullptr;
     QString x11env="";
     QString myenv="";
+    QString tempdata="";
+    int dataSayac=0;
 };
 
 #endif // CLIENT_H
