@@ -41,6 +41,5 @@ Depends: ${shlibs:Depends}, ${misc:Depends},
 	xtightvncviewer,
 	net-tools,
 	expect,
-	xrdp,
 	ethtool
 Description: E-Ag İsteci Konsol Uygulaması
