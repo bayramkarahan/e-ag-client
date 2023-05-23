@@ -195,10 +195,10 @@ void Client::udpSocketGetMyEnvRead()
           {
               udpSocketSendTServer(data);
               tempdata=data;
-              dataSayac=0;
+              dataSayac=1;
           }
           else dataSayac++;
-          if(dataSayac>10)
+          if(dataSayac>1)
           {
               udpSocketSendTServer(data);
               tempdata=data;
