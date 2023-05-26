@@ -9,6 +9,7 @@
 #include<QNetworkInterface>
 #include<QProcess>
 #include<QObject>
+#include<QSysInfo>
 class IpMac
 {
 public:
@@ -43,6 +44,8 @@ private slots:
    // void timerControlSlot();
     void hostAddressMacButtonSlot();
     void webBlockAktifPasif();
+    QString getSeatId();
+    QString getSessionInfo(QString id, QString parametre);
     //QString getIpPort///Status(QString ip_,QString prt);
 private:
     bool webblockstate;
@@ -65,6 +68,14 @@ private:
     QString myenv="";
     QString tempdata="";
     int dataSayac=0;
+    QString seatId;
+    QString sessionUser;
+    QString sessionUserId;
+    QString sessionDisplay;
+    QString sessionDisplayType;
+    QString sessionDesktopManager;
+
+
 };
 
 #endif // CLIENT_H

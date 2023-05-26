@@ -8,6 +8,7 @@
 
 Client::Client()
 {
+
  //hostAddressMacButtonSlot();return;
 
     localDir="/usr/share/e-ag/";
@@ -88,10 +89,153 @@ tcpMesajSendTimerSlot();
 void Client::tcpMesajSendTimerSlot()
 {
 
-   system("nohup /usr/bin/e-ag-run.sh&");
+    sessionUser=getSessionInfo(getSeatId(),"USER=");
+    QStringRef _sessionUser=sessionUser.rightRef(sessionUser.length()-5);
+    sessionUser=_sessionUser.toString();
 
+    sessionUserId=getSessionInfo(getSeatId(),"UID=");
+    QStringRef _sessionUserId=sessionUserId.rightRef(sessionUserId.length()-4);
+    sessionUserId=_sessionUserId.toString();
+
+    sessionDisplay=getSessionInfo(getSeatId(),"DISPLAY=:");
+    QStringRef _sessionDisplay=sessionDisplay.rightRef(sessionDisplay.length()-9);
+    sessionDisplay=_sessionDisplay.toString();
+
+    sessionDesktopManager=getSessionInfo(getSeatId(),"SERVICE=");
+    QStringRef _sessionDesktopManager=sessionDesktopManager.rightRef(sessionDesktopManager.length()-8);
+    sessionDesktopManager=_sessionDesktopManager.toString();
+
+    sessionDisplayType=getSessionInfo(getSeatId(),"ORIGINAL_TYPE=");
+    QStringRef _sessionDisplayType=sessionDisplayType.rightRef(sessionDisplayType.length()-14);
+    sessionDisplayType=_sessionDisplayType.toString();
+
+    QSysInfo sysinfo;
+    //= new QSysInfo();
+    /*qDebug()<<"buildCpuArchitecture: " <<sysinfo.buildCpuArchitecture();
+    qDebug()<<"currentCpuArchitecture: " <<sysinfo.currentCpuArchitecture();
+    qDebug()<<"kernel type and version:" <<sysinfo.kernelType()<<sysinfo.kernelVersion().left(1);
+    qDebug()<<"product name and version:  " <<sysinfo.prettyProductName();
+    */
+    QString projeversion=sysinfo.prettyProductName()+sysinfo.kernelVersion().left(1);
+
+
+//qDebug()<<sessionUser<<sessionDisplay<<sessionUserId<<projeversion<<sessionDesktopManager<<sessionDisplayType;
+ myenv="myenv|"+sessionUser+"|"+sessionDisplay+"|"+sessionUserId+"|"+projeversion+"|"+sessionDesktopManager;
+ qDebug()<<"myenv"<<myenv;
+ /******************************************************/
+  /*    if(x11env=="")
+          x11env="noLogin|0|0|0|0";
+
+     // else
+      //    x11env=x11env;
+     // QString result1=arg;
+      bool sshState;
+      int vncState;
+      bool ftpState;
+      /*************************************/
+     /* if (getIpPortStatus("systemctl status ssh.service|grep 'running'|wc -l")=="open")
+          sshState=true;
+      else sshState=false;
+      /*************************************/
+    /*  if (getIpPortStatus("systemctl status e-ag-x11vncdesktop.service|grep '5900'|wc -l")=="open")
+          vncState=5900;
+      else if (getIpPortStatus("systemctl status e-ag-x11vnclogin.service|grep '5902'|wc -l")=="open")
+          vncState=5902;
+      else vncState=0;
+      /*************************************/
+     /* if (getIpPortStatus("systemctl status vsftpd.service|grep 'running'|wc -l")=="open")
+          ftpState=true;
+      else ftpState=false;
+      /*************************************/
+      /// qDebug()<<"durum:"<<x11env<<result1;
+     /* QString data="portStatus|mydisp|"+x11env+"|"+myenv+"|"+QString::number(sshState)+"|"+QString::number(vncState)+"|"+QString::number(ftpState);
+      if(tempdata!=data)
+      {
+          udpSocketSendTServer(data);
+          tempdata=data;
+          dataSayac=1;
+      }
+      else dataSayac++;
+      if(dataSayac>1)
+      {
+          udpSocketSendTServer(data);
+          tempdata=data;
+          dataSayac=0;
+      }
+
+      data="";
+      x11env="";
+      myenv="";
+//   system("nohup /usr/bin/e-ag-run.sh&");
+*/
 }
 
+QString  Client::getSeatId()
+{
+    QString tempseatId;
+    if(QFile::exists("/run/systemd/seats/seat0"))
+    {
+        QStringList list;
+        const int size = 256;
+        //seat=fileToList("/run/systemd/seats","seat0");
+    //qDebug()<<"seat:"<<seat;
+        FILE* fp = fopen("/run/systemd/seats/seat0", "r");
+        if(fp == NULL)
+        {
+            perror("Error opening /run/systemd/seats/seat0");
+        }
+
+        char line[size];
+        fgets(line, size, fp);    // Skip the first line, which consists of column headers.
+        while(fgets(line, size, fp))
+        {
+            QString satir=line;
+            satir.chop(1);
+            if(satir.contains("ACTIVE=")){
+                QStringRef _seatid=satir.rightRef(satir.length()-7);
+                tempseatId=_seatid.toString();
+                //qDebug()<<seatId;
+            }
+
+        }
+
+        fclose(fp);
+    }
+
+return tempseatId;
+}
+QString Client::getSessionInfo(QString id, QString parametre)
+{
+    QString tempsessionParametre;
+    QString filename="/run/systemd/sessions/"+id;
+
+    if(QFile::exists(filename))
+    {
+        const int size = 256;
+        FILE* fp = fopen(filename.toStdString().c_str(), "r");
+        if(fp == NULL)
+        {
+            perror("Error opening /run/systemd/sessions/");
+        }
+
+        char line[size];
+        fgets(line, size, fp);    // Skip the first line, which consists of column headers.
+        while(fgets(line, size, fp))
+        {
+            QString satir=line;
+            satir.chop(1);
+         //   tempsessionlist<<satir;
+            //qDebug()<<"satir: "<<satir;
+            if(satir.contains(parametre)){
+               tempsessionParametre=satir;
+            }
+        }
+
+        fclose(fp);
+    }
+
+    return tempsessionParametre;
+}
 Client::~Client()
 {
 
