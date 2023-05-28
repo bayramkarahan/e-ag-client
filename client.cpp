@@ -76,6 +76,7 @@ tcpMesajSendTimerSlot();
             QObject::connect(udpSocketGetMyEnv,&QUdpSocket::readyRead,[&](){udpSocketGetMyEnvRead();});
 
             qDebug()<<tcpPort<<uport<<"udp bağlandı";
+            tcpMesajSendTimerSlot();
 
         }
 
@@ -121,9 +122,9 @@ void Client::tcpMesajSendTimerSlot()
 
 //qDebug()<<sessionUser<<sessionDisplay<<sessionUserId<<projeversion<<sessionDesktopManager<<sessionDisplayType;
  myenv="myenv|"+sessionUser+"|"+sessionDisplay+"|"+sessionUserId+"|"+projeversion+"|"+sessionDesktopManager;
- qDebug()<<"myenv"<<myenv;
+ //qDebug()<<"myenv"<<myenv;
  /******************************************************/
-  /*    if(x11env=="")
+      if(x11env=="")
           x11env="noLogin|0|0|0|0";
 
      // else
@@ -133,41 +134,44 @@ void Client::tcpMesajSendTimerSlot()
       int vncState;
       bool ftpState;
       /*************************************/
-     /* if (getIpPortStatus("systemctl status ssh.service|grep 'running'|wc -l")=="open")
+      if (getIpPortStatus("systemctl status ssh.service|grep 'running'|wc -l",0)=="open")
           sshState=true;
       else sshState=false;
       /*************************************/
-    /*  if (getIpPortStatus("systemctl status e-ag-x11vncdesktop.service|grep '5900'|wc -l")=="open")
+      if (getIpPortStatus("systemctl status e-ag-x11vncdesktop.service|grep 'PORT=5900'|wc -l",0)=="open")
           vncState=5900;
-      else if (getIpPortStatus("systemctl status e-ag-x11vnclogin.service|grep '5902'|wc -l")=="open")
+      else if (getIpPortStatus("systemctl status e-ag-x11vnclogin.service|grep 'PORT=5902'|wc -l",0)=="open")
           vncState=5902;
-      else vncState=0;
+      else vncState=5905;
       /*************************************/
-     /* if (getIpPortStatus("systemctl status vsftpd.service|grep 'running'|wc -l")=="open")
+      if (getIpPortStatus("systemctl status vsftpd.service|grep 'running'|wc -l",0)=="open")
           ftpState=true;
       else ftpState=false;
       /*************************************/
-      /// qDebug()<<"durum:"<<x11env<<result1;
-     /* QString data="portStatus|mydisp|"+x11env+"|"+myenv+"|"+QString::number(sshState)+"|"+QString::number(vncState)+"|"+QString::number(ftpState);
+      ///qDebug()<<"durum:"<<x11env<<myenv;
+      QString data="portStatus|mydisp|"+x11env+"|"+myenv+"|"+QString::number(sshState)+"|"+QString::number(vncState)+"|"+QString::number(ftpState);
       if(tempdata!=data)
       {
+
           udpSocketSendTServer(data);
           tempdata=data;
           dataSayac=1;
+
       }
       else dataSayac++;
-      if(dataSayac>1)
+      if(dataSayac>10)
       {
           udpSocketSendTServer(data);
           tempdata=data;
           dataSayac=0;
+
       }
 
       data="";
       x11env="";
       myenv="";
 //   system("nohup /usr/bin/e-ag-run.sh&");
-*/
+
 }
 
 QString  Client::getSeatId()
@@ -239,6 +243,9 @@ QString Client::getSessionInfo(QString id, QString parametre)
 Client::~Client()
 {
 
+    QString data="portStatus|mydisp|noLogin|0|0|0|0|myenv|noLogin|0|0|0|0|0|0|0|close";
+    udpSocketSendTServer(data);
+
     udpSocketSend->close();
     udpSocketSend->deleteLater();
 
@@ -285,7 +292,7 @@ void Client::udpSocketGetMyDispRead()
         udpSocketGetMyDisp->readDatagram(datagram.data(), datagram.size(), &sender, &senderPort);
 
         QString rmesaj=datagram.constData();
-     ///   qDebug()<<"x11'den Gelen Udp Mesaj:"<<rmesaj;
+        ///qDebug()<<"x11'den Gelen Udp Mesaj:"<<rmesaj;
         x11env=rmesaj;
 
     }
@@ -319,17 +326,17 @@ void Client::udpSocketGetMyEnvRead()
           int vncState;
           bool ftpState;
           /*************************************/
-          if (getIpPortStatus("systemctl status ssh.service|grep 'running'|wc -l")=="open")
+          if (getIpPortStatus("systemctl status ssh.service|grep 'running'|wc -l",0)=="open")
               sshState=true;
           else sshState=false;
           /*************************************/
-          if (getIpPortStatus("systemctl status e-ag-x11vncdesktop.service|grep '5900'|wc -l")=="open")
+          if (getIpPortStatus("systemctl status e-ag-x11vncdesktop.service|grep '5900'|wc -l",1)=="open")
               vncState=5900;
-          else if (getIpPortStatus("systemctl status e-ag-x11vnclogin.service|grep '5902'|wc -l")=="open")
+          else if (getIpPortStatus("systemctl status e-ag-x11vnclogin.service|grep '5902'|wc -l",1)=="open")
               vncState=5902;
           else vncState=0;
           /*************************************/
-          if (getIpPortStatus("systemctl status vsftpd.service|grep 'running'|wc -l")=="open")
+          if (getIpPortStatus("systemctl status vsftpd.service|grep 'running'|wc -l",0)=="open")
               ftpState=true;
           else ftpState=false;
           /*************************************/
@@ -378,14 +385,59 @@ void Client::udpSocketGetRead()
         if(mesaj[0]=="hostport")
         {
             //qDebug()<<"Gelen Udp Mesaj:"<<mesaj[2];
+            QString _ip=mesaj[1];
+            QString _port=mesaj[3];
+            QString _mac=mesaj[2];
+            QString record=_ip+"|"+_port+"|"+_mac+"|Server";
+          //  QStringList closerecord=mesaj[1]+"|"+mesaj[3]+"|"+mesaj[2]+"|Server";
+
             QStringList hostlist=fileToList("/usr/share/e-ag/","hostport");
+            QStringList clientcloselist=fileToList("/usr/share/e-ag/","clientclose.sh");
+
             if(hostlist.count()>2)hostlist.clear();
+            if(clientcloselist.count()>2)clientcloselist.clear();
 
-            hostlist=listRemove(hostlist,mesaj[2]);///mac ad. göre server kayıt
-            hostlist.append(mesaj[1]+"|"+mesaj[3]+"|"+mesaj[2]+"|Server");
+            if(listGetLine(hostlist,record)==""||mesaj[4]=="0")
+            {
+                hostlist=listRemove(hostlist,_mac);///mac ad. göre server kayıt
+                hostlist.append(record);
+                listToFile(localDir,hostlist,"hostport");
+                system("chmod 777 /usr/share/e-ag/hostport");
+               /****************************************************************/
+               // QStringList serverlist=_ip;
+                    hostAddressMacButtonSlot();
+                    for(int k=0;k<ipmaclist.count();k++)
+                    {
+                        if(_ip.section(".", 0, 2)==ipmaclist[k].ip.section(".", 0,2))
+                        {
+                          /*  QString msg="Client Mesaj|"+ipmaclist[k].ip+"|"+ipmaclist[k].mac+"|"+_data;
+                            QByteArray datagram = msg.toUtf8();// +QHostAddress::LocalHost;
+                            udpSocketSend->writeDatagram(datagram,QHostAddress(serverlist[0]), tcpPort.toInt());
+                            qDebug()<<"server'a mesaj gönderildi:"<< serverlist[0]<<_data;*/
+                            // echo -n "Client Mesaj|192.168.1.101|08:00:27:9B:A0:A1|portStatus|mydisp|noLogin|0|0|0|0|myenv|noLogin|0|0|0|0|0|0|0|close" >/dev/udp/192.168.1.103/7879
+                            QString dosya=QString("cat >/usr/share/e-ag/clientclose.sh << EOF"
+                                          "\n#!/bin/bash"
+                                          "\n echo -n \"Client Mesaj|%3|%4|portStatus|mydisp|noLogin|0|0|0|0|myenv|noLogin|0|0|0|0|0|0|0\" >/dev/udp/%1/%2"
+                                          "\nEOF").arg(_ip,_port,ipmaclist[k].ip,ipmaclist[k].mac);
 
-            listToFile(localDir,hostlist,"hostport");
-            system("chmod 777 /usr/share/e-ag/hostport");
+                             system(dosya.toStdString().c_str());
+                             system("chmod 755 /usr/share/e-ag/clientclose.sh");
+                        }
+                    }
+
+
+
+
+                /********************************************************* */
+                     tcpMesajSendTimerSlot();
+            }
+
+
+
+            /*if(mesaj[4]=="0"){
+                tcpMesajSendTimerSlot();
+
+            }*/
         }
         if(mesaj[0]=="tcpporttest")
         {
@@ -421,22 +473,22 @@ void Client::udpSocketGetRead()
         if(mesaj[0]=="sshporttest")
         {
             /*************************************/
-            if (getIpPortStatus("systemctl status ssh.service|grep 'running'|wc -l")=="open")
+            if (getIpPortStatus("systemctl status ssh.service|grep 'running'|wc -l",0)=="open")
                 udpSocketSendTServer("sshporttestopen");
             else udpSocketSendTServer("sshporttestclose");
         }
         if(mesaj[0]=="vncporttest")
         {
             /*************************************/
-            if (getIpPortStatus("systemctl status e-ag-x11vncdesktop.service|grep 'running'|wc -l")=="open"||
-                    getIpPortStatus("systemctl status e-ag-x11vnclogin.service|grep 'running'|wc -l")=="open")
+            if (getIpPortStatus("systemctl status e-ag-x11vncdesktop.service|grep '5900'|wc -l",1)=="open"||
+                    getIpPortStatus("systemctl status e-ag-x11vnclogin.service|grep '5902'|wc -l",1)=="open")
                 udpSocketSendTServer("vncporttestopen");
             else udpSocketSendTServer("vncporttestclose");
         }
         if(mesaj[0]=="ftpporttest")
         {
             /*************************************/
-            if (getIpPortStatus("systemctl status vsftpd.service|grep 'running'|wc -l")=="open")
+            if (getIpPortStatus("systemctl status vsftpd.service|grep 'running'|wc -l",0)=="open")
                 udpSocketSendTServer("ftpporttestopen");
             else udpSocketSendTServer("ftpporttestclose");
         }
@@ -642,7 +694,7 @@ void Client::komutSudoExpect(QString komut,QString username,QString password)
 //qDebug()<<"finalll";
 }
 
-QString Client::getIpPortStatus(QString service)
+QString Client::getIpPortStatus(QString service,int number)
 {
     QString result="";
     QStringList arguments;
@@ -654,8 +706,8 @@ QString Client::getIpPortStatus(QString service)
         result = process.readAll();
         result.chop(1);
     }
-    qDebug()<<"Port sorgulama:"<<result<<service;
-    if(result.toInt()>0){ return "open";}
+   // qDebug()<<"Port sorgulama:"<<result<<service;
+    if(result.toInt()>number){ return "open";}
     else {return "close";}
 }
 /*QString Client::getIpPortStatus(QString ip_,QString port)
@@ -764,7 +816,6 @@ void Client::listToFile(QString path,QStringList list, QString filename)
 
     }
  }
-
 void Client::hostAddressMacButtonSlot()
 {
     QHostAddress localhost = QHostAddress(QHostAddress::LocalHost);
@@ -797,7 +848,6 @@ ipmaclist.clear();
 
 
 }
-
 void Client::commandExecuteSlot(QString command,QString username,QString password)
 {
     //sshpass -p $parola ssh -o StrictHostKeyChecking=no -n $username@$name "echo $parola | sudo -S" $komut

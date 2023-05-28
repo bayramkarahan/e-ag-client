@@ -32,7 +32,7 @@ signals:
     QStringList fileToList(QString path,QString filename);
     void listToFile(QString path,QStringList list, QString filename);
     QString listGetLine(QStringList list,QString data);
-    QString  getIpPortStatus(QString service);
+    QString  getIpPortStatus(QString service, int number);
     void tcpMesajSendTimerSlot();
     void komutSudoExpect(QString komut,QString username,QString password);
 private slots:
@@ -74,6 +74,7 @@ private:
     QString sessionDisplay;
     QString sessionDisplayType;
     QString sessionDesktopManager;
+    int hostportCounter;
 
 
 };
