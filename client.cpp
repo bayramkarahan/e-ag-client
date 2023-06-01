@@ -142,7 +142,7 @@ void Client::tcpMesajSendTimerSlot()
           vncState=5900;
       else if (getIpPortStatus("systemctl status e-ag-x11vnclogin.service|grep '5902'|wc -l",1)=="open")
           vncState=5902;
-      else if (getIpPortStatus("systemctl status e-ag-x11vnclogin.service|grep '5905'|wc -l",1)=="open")
+      else if (getIpPortStatus("systemctl status novnc-x11vnc.service|grep '5905'|wc -l",1)=="open")
           vncState=5905;
       else vncState=5902;
       /*************************************/
