@@ -138,11 +138,13 @@ void Client::tcpMesajSendTimerSlot()
           sshState=true;
       else sshState=false;
       /*************************************/
-      if (getIpPortStatus("systemctl status e-ag-x11vncdesktop.service|grep 'PORT=5900'|wc -l",0)=="open")
+      if (getIpPortStatus("systemctl status e-ag-x11vncdesktop.service|grep '5900'|wc -l",1)=="open")
           vncState=5900;
-      else if (getIpPortStatus("systemctl status e-ag-x11vnclogin.service|grep 'PORT=5902'|wc -l",0)=="open")
+      else if (getIpPortStatus("systemctl status e-ag-x11vnclogin.service|grep '5902'|wc -l",1)=="open")
           vncState=5902;
-      else vncState=5905;
+      else if (getIpPortStatus("systemctl status e-ag-x11vnclogin.service|grep '5905'|wc -l",1)=="open")
+          vncState=5905;
+      else vncState=5902;
       /*************************************/
       if (getIpPortStatus("systemctl status vsftpd.service|grep 'running'|wc -l",0)=="open")
           ftpState=true;
