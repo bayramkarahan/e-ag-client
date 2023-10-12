@@ -3,18 +3,6 @@ Section: utils
 Priority: optional
 Maintainer: Bayram KARAHAN <bayramk@gmail.com>
 Build-Depends: debhelper (>= 9), 
-    libc6,
-    libgcc1,
-    libgcc-12-dev,
-    libgl1-mesa-glx | libgl1,
-    libqt5core5a,
-    libqt5gui5,
-    libqt5network5,
-    libqt5qml5,
-    libqt5quick5,
-    libqt5svg5-dev,
-    libqt5widgets5,
-    libstdc++6,
     qtdeclarative5-dev
 Standards-Version: 3.9.8
 Homepage: http://pardus.org.tr
@@ -22,21 +10,13 @@ Homepage: http://pardus.org.tr
 Package: e-ag-client
 Architecture: amd64
 Depends: ${shlibs:Depends}, ${misc:Depends},
-        libqt5xml5,
 	libqt5core5a,
     	libqt5gui5,
     	libqt5network5,
-    	libqt5qml5,
-    	libqt5quick5,
-    	libqt5svg5-dev,
     	libqt5widgets5,
-    	libstdc++6,
-	libqt5widgets5,
 	openssh-server,
 	sshpass,
-	rdesktop,
 	x11vnc,
-	vsftpd,
 	xtightvncviewer,
 	net-tools,
 	ethtool
