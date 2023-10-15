@@ -17,6 +17,7 @@ Depends: ${shlibs:Depends}, ${misc:Depends},
 	openssh-server,
 	sshpass,
 	x11vnc,
+	vsftpd,
 	xtightvncviewer,
 	net-tools,
 	ethtool

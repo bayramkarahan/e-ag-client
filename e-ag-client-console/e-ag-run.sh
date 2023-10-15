@@ -32,8 +32,6 @@ myid=$(id -u $myuser)
 version=$(uname -a|awk '{print $3}'|cut -c1-1) 	#3.16=>3	4.19=>4	vb.
 proje=$(uname -a|awk '{print $2}')		#etap 	pardus 	vb.
 
-#echo "myenv|$myuser|$mydisplay|$myid|$proje$version|$mydesktopmanager" > /tmp/myenv
-#/usr/bin/e-ag-client-env "eagclientenv" "myenv|$myuser|$mydisplay|$myid|$proje$version|$mydesktopmanager"
 echo -n "myenv|$myuser|$mydisplay|$myid|$proje$version|$mydesktopmanager" >/dev/udp/127.0.0.1/6666
 #echo -n "portStatus|mydisp|noLogin|0|0|0|0|myenv|noLogin|0|0|0|0|0|0|0|close" >/dev/udp/127.0.0.1/6666
 #echo $mydisplay

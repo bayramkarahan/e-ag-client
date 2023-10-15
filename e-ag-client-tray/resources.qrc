@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/e-ag-client.svg</file>
+    </qresource>
+</RCC>

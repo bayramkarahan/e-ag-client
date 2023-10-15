@@ -1,13 +1,13 @@
  [Unit]
-Description=e-agClient Başlatıldı.
+Description=e-ag-client Başlatıldı.
 After=multi-user.target
 
 [Service]
 Type=simple
 #Environment=export DISPLAY=:0
 #ExecStartPre=/usr/bin/bash /usr/local/lib/common/createQcowImage.sh ${VM_XML}
-ExecStart=/usr/bin/e-ag-client 1>/usr/share/e-ag/Client.log 2>ClientError.log
-ExecStop=/usr/share/e-ag/clientclose.sh
+ExecStart=/usr/bin/e-ag-client-console 1>/usr/share/e-ag/e-ag-client.log 2>e-ag-client-error.log
+#ExecStop=/usr/share/e-ag/clientclose.sh
 
 [Install]
 WantedBy=multi-user.target
