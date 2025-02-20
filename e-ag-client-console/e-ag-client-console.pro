@@ -52,7 +52,7 @@ runfile.path = /usr/bin/
 webdisablefile.files = webdisable.sh
 webdisablefile.path = /usr/share/e-ag/
 
-INSTALLS += target service x11servicedesktop x11servicelogin x11passwd runfile webdisablefile
+INSTALLS += target service x11servicedesktop x11servicelogin x11passwd webdisablefile
 
 
 DISTFILES += \
@@ -60,7 +60,6 @@ DISTFILES += \
     e-ag-x11vncdesktop.service\
     e-ag-x11vnclogin.service\
     x11vncpasswd\
-    e-ag-run.sh\
     webdisable.sh
 
 

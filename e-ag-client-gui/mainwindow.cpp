@@ -119,12 +119,14 @@ MainWindow::MainWindow(QWidget *parent) :
 
 void MainWindow::webBlockAktifPasif()
 {
+    if(!QFileInfo::exists("/usr/share/e-ag/e-ag-x11client.conf")) return;
     QStringList ayarlst=fileToList("/usr/share/e-ag/","e-ag-x11client.conf");
 
 
     /**********************************************************/
         if(listGetLine(ayarlst,"rootusername")!="")
         {
+
             QString strrootusername=listGetLine(ayarlst,"rootusername").split("|")[1];
             //qDebug()<<strwebblockstate;
             rootusername=strrootusername;
@@ -140,19 +142,28 @@ void MainWindow::webBlockAktifPasif()
 /**********************************************************/
     if(listGetLine(ayarlst,"webblockstate")!="")
     {
+
         QString strwebblockstate=listGetLine(ayarlst,"webblockstate").split("|")[1];
         //qDebug()<<strwebblockstate;
         webblockstate=strwebblockstate.toInt();
         webblockcb->setChecked(webblockstate);
     }
+
     /******************************************************************/
     if(webblockstate==true)
     {
-     komutSudoExpect("/usr/share/e-ag/webdisable.sh",rootusername,rootpassword);
+
+        if(QFileInfo::exists("/usr/share/e-ag/webdisable.sh")){
+            QString kmt22="/usr/share/e-ag/webdisable.sh &";
+            system(kmt22.toStdString().c_str());
+        }
     }
+
     if(webblockstate==false)
     {
-    komutSudoExpect("iptables -F",rootusername,rootpassword);
+        QString kmt22="iptables -F &";
+        system(kmt22.toStdString().c_str());
+
     }
        /*********************************************************/
 

@@ -34,16 +34,18 @@ signals:
     QString listGetLine(QStringList list,QString data);
     QString  getIpPortStatus(QString service, int number);
     void tcpMesajSendTimerSlot();
-    void komutSudoExpect(QString komut,QString username,QString password);
+    void socketBaglama();
 private slots:
      void commandExecuteSlot(QString command,QString username,QString password);
-    void udpSocketGetRead();
-     void udpSocketGetMyDispRead();
-      void udpSocketGetMyEnvRead();
-    void udpSocketSendTServer(QString _data);
+    void udpServerGetSlot();
+      void udpTrayGetSlot();
+      void udpGuiGetSlot();
+
+    void udpServerSendSlot(QString _data);
    // void timerControlSlot();
     void hostAddressMacButtonSlot();
     void webBlockAktifPasif();
+
     QString getSeatId();
     QString getSessionInfo(QString id, QString parametre);
     //QString getIpPort///Status(QString ip_,QString prt);
@@ -59,13 +61,15 @@ private:
     QString localDir1;
     QString ip;
     QString tcpPort;
-    QUdpSocket *udpSocketSend = nullptr;
-    QUdpSocket *udpSocketGet = nullptr;
-    QUdpSocket *udpSocketGetMyDisp = nullptr;
-    QUdpSocket *udpSocketGetMyEnv = nullptr;
-    QUdpSocket *udpSocketSendX11Mesaj = nullptr;
-    QString x11env="";
-    QString myenv="";
+    QUdpSocket *udpServerSend = nullptr;
+    QUdpSocket *udpServerGet = nullptr;
+    QUdpSocket *udpTraySend = nullptr;
+    QUdpSocket *udpTrayGet = nullptr;
+    QUdpSocket *udpGuiGet = nullptr;
+
+    QString clientTrayEnv="";
+    QString clientGuiEnv="";
+     QString clientConsoleEnv="";
     QString tempdata="";
     int dataSayac=0;
     QString seatId;

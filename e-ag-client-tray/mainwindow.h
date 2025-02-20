@@ -53,7 +53,7 @@ public:
 virtual void closeEvent ( QCloseEvent * event );
 
 public slots:
-    void udpSocketGetX11MesajRead();
+    void udpConsoleGetSlot();
     void webBlockAktifPasif();
     void tcpMessageControlSlot(QString _data);
     void  WidgetClosed();
@@ -122,8 +122,9 @@ private:
     QTimer *timer;
     QTimer *tcpMesajControlTimer;
     Ekran *ekran;
-    QUdpSocket *udpSocketSendMyDisp = nullptr;
-    QUdpSocket *udpSocketGetX11Mesaj = nullptr;
+
+    QUdpSocket *udpConsoleGet = nullptr;
+    QUdpSocket *udpConsoleSend= nullptr;
 
 };
 

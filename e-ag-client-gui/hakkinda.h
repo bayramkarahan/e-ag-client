@@ -34,7 +34,7 @@ QWidget *MainWindow::hakkinda()
 
     hak->setText("Bu Uygulama Ağ üzerindeki Bilgisayarları Yönetmek İçin Yazılmıştır."
                  "\n"
-                  "\n   Copyright (C) 2023 by Bayram KARAHAN                                    "
+                  "\n   Copyright (C) 2025 by Bayram KARAHAN                                    "
                   "\n\n   <bayramk@gmail.com>  <bayramkarahan.blogspot.com>                     "
                   "\n\thttps://github.com/bayramkarahan/e-ag-client                          "
                   "\n\n   This program is free software; you can redistribute it and/or modify  "
@@ -57,7 +57,7 @@ QWidget *MainWindow::hakkinda()
                  "\nE-Posta: bayramk@gmail.com"
                  "\nbayramkarahan.blogspot.com"
                  "\n");
-    QFont ff( "Arial", 7, QFont::Normal);
+    QFont ff( "Arial", 8, QFont::Normal);
     hak->setFont(ff);
 
     auto layout = new QGridLayout(hakkindaPage);

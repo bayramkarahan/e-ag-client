@@ -9,82 +9,18 @@
 Client::Client()
 {
 
- //hostAddressMacButtonSlot();return;
-
     localDir="/usr/share/e-ag/";
     localDir1="/tmp/";
-
     QString kmt25="rm -rf "+localDir+"kilitclose";
     system(kmt25.toStdString().c_str());
-
     QString kmt26="rm -rf "+localDir+"kilitopen";
     system(kmt26.toStdString().c_str());
-
-
 /************************************************/
     QTimer *tcpMesajSendTimer = new QTimer();
     QObject::connect(tcpMesajSendTimer, &QTimer::timeout, [&](){
-
-
-tcpMesajSendTimerSlot();
+        tcpMesajSendTimerSlot();
     });
     tcpMesajSendTimer->start(3000);
-
-
-    /***********************************/
-    FileCrud *fcc=new FileCrud();
-    fcc->dosya=localDir+"hostport";
-    QStringList lst;
-    if(!fcc->fileExists())
-    {
-        lst.append("|7879|Server");
-        listToFile(localDir,lst,"hostport");
-          system("chmod 777 /usr/share/e-ag/hostport");
-    }
-    QStringList hostfile=fileToList(localDir,"hostport");
-    /**********************************************************/
-
-    if(fcc->fileExists())
-    {
-
-        if (listGetLine(hostfile,"Server")!="")
-        {
-            QString hostportLine=listGetLine(hostfile,"Server");
-            tcpPort=hostportLine.split("|")[1];
-            /***************************************************/
-            QString uport=tcpPort;
-            std::reverse(uport.begin(), uport.end());
-          //  QHostAddress *host  = new QHostAddress("192.168.63.254");
-         //  QHostAddress *server = new QHostAddress("192.168.23.253");
-
-
-           udpSocketSend = new QUdpSocket();
-           udpSocketSendX11Mesaj= new QUdpSocket();
-           udpSocketGet = new QUdpSocket();
-           udpSocketGetMyDisp=new QUdpSocket();;
-           udpSocketGetMyEnv=new QUdpSocket();;
-
-           // udpSocketSend->connectToHost(*server,tcpPort.toInt());
-          // udpSocketSend->bind(tcpPort.toInt(), QUdpSocket::ShareAddress);
-            udpSocketGet->bind(uport.toInt(), QUdpSocket::ShareAddress);
-            udpSocketGetMyDisp->bind(5555, QUdpSocket::ShareAddress);
-            udpSocketGetMyEnv->bind(6666, QUdpSocket::ShareAddress);
-
-           //udpSocketGet->bind(*host, uport.toInt());
-            QObject::connect(udpSocketGet,&QUdpSocket::readyRead,[&](){udpSocketGetRead();});
-            QObject::connect(udpSocketGetMyDisp,&QUdpSocket::readyRead,[&](){udpSocketGetMyDispRead();});
-            QObject::connect(udpSocketGetMyEnv,&QUdpSocket::readyRead,[&](){udpSocketGetMyEnvRead();});
-
-            qDebug()<<tcpPort<<uport<<"udp bağlandı";
-            tcpMesajSendTimerSlot();
-
-        }
-
-
-    }
-
-    /**************************************/
-    //connectHost();
 }
 
 void Client::tcpMesajSendTimerSlot()
@@ -115,17 +51,19 @@ void Client::tcpMesajSendTimerSlot()
     /*qDebug()<<"buildCpuArchitecture: " <<sysinfo.buildCpuArchitecture();
     qDebug()<<"currentCpuArchitecture: " <<sysinfo.currentCpuArchitecture();
     qDebug()<<"kernel type and version:" <<sysinfo.kernelType()<<sysinfo.kernelVersion().left(1);
-    qDebug()<<"product name and version:  " <<sysinfo.prettyProductName();
-    */
-    QString projeversion=sysinfo.prettyProductName()+sysinfo.kernelVersion().left(1);
+qDebug()<<"product name and version:  " <<sysinfo.prettyProductName();
+*/
+//qDebug()<<"product name and version:  " <<sysinfo.machineHostName();
 
+   // QString projeversion=sysinfo.prettyProductName()+sysinfo.kernelVersion().left(1);
+QString hostname=sysinfo.machineHostName();
 
 //qDebug()<<sessionUser<<sessionDisplay<<sessionUserId<<projeversion<<sessionDesktopManager<<sessionDisplayType;
- myenv="myenv|"+sessionUser+"|"+sessionDisplay+"|"+sessionUserId+"|"+projeversion+"|"+sessionDesktopManager;
- //qDebug()<<"myenv"<<myenv;
+ clientConsoleEnv="clientConsoleEnv|"+sessionUser+"|"+sessionDisplay+"|"+sessionUserId+"|"+hostname+"|"+sessionDesktopManager;
+ //qDebug()<<"clientConsoleEnv"<<clientConsoleEnv;
  /******************************************************/
-      if(x11env=="")
-          x11env="noLogin|0|0|0|0";
+      if(clientTrayEnv=="")
+          clientTrayEnv="noLogin|0|0|0|0";
 
      // else
       //    x11env=x11env;
@@ -140,6 +78,8 @@ void Client::tcpMesajSendTimerSlot()
       /*************************************/
       if (getIpPortStatus("systemctl status e-ag-x11vncdesktop.service|grep '5900'|wc -l",1)=="open")
           vncState=5900;
+       else if (getIpPortStatus("systemctl status e-ag-x11vnclogin.service|grep '5901'|wc -l",1)=="open")
+            vncState=5901;
       else if (getIpPortStatus("systemctl status e-ag-x11vnclogin.service|grep '5902'|wc -l",1)=="open")
           vncState=5902;
       else if (getIpPortStatus("systemctl status novnc-x11vnc.service|grep '5905'|wc -l",1)=="open")
@@ -151,27 +91,28 @@ void Client::tcpMesajSendTimerSlot()
       else ftpState=false;
       /*************************************/
       ///qDebug()<<"durum:"<<x11env<<myenv;
-      QString data="portStatus|mydisp|"+x11env+"|"+myenv+"|"+QString::number(sshState)+"|"+QString::number(vncState)+"|"+QString::number(ftpState);
+      QString data="portStatus|clientTrayEnv|"+clientTrayEnv+"|"+clientConsoleEnv+"|"+QString::number(sshState)+"|"+QString::number(vncState)+"|"+QString::number(ftpState);
+      //qDebug()<<"gidecek data:"<<data;
       if(tempdata!=data)
       {
 
-          udpSocketSendTServer(data);
+          udpServerSendSlot(data);
           tempdata=data;
           dataSayac=1;
 
       }
       else dataSayac++;
-      if(dataSayac>10)
+      if(dataSayac>3)
       {
-          udpSocketSendTServer(data);
+          udpServerSendSlot(data);
           tempdata=data;
           dataSayac=0;
 
       }
 
       data="";
-      x11env="";
-      myenv="";
+      clientTrayEnv="";
+      clientConsoleEnv="";
 //   system("nohup /usr/bin/e-ag-run.sh&");
 
 }
@@ -246,20 +187,89 @@ Client::~Client()
 {
 
     QString data="portStatus|mydisp|noLogin|0|0|0|0|myenv|noLogin|0|0|0|0|0|0|0|close";
-    udpSocketSendTServer(data);
+    udpServerSendSlot(data);
 
-    udpSocketSend->close();
-    udpSocketSend->deleteLater();
+    udpServerSend->close();
+    udpServerSend->deleteLater();
 
 
 }
 
-
-void Client::udpSocketSendTServer(QString _data)
+void Client::socketBaglama()
 {
+    qDebug()<<"socket bağlantıları kuruluyor....";
+    /***********************************/
+    FileCrud *fcc=new FileCrud();
+    fcc->dosya=localDir+"hostport";
+    QStringList lst;
+    if(!fcc->fileExists())
+    {
+        qDebug()<<"server dosyası oluşturuluyor";
+        lst.append("|7879|Server");
+        listToFile(localDir,lst,"hostport");
+          system("chmod 777 /usr/share/e-ag/hostport");
+    }
+    QStringList hostfile=fileToList(localDir,"hostport");
+    /**********************************************************/
 
+     if(fcc->fileExists())
+    {
+
+        if (listGetLine(hostfile,"Server")!="")
+        {
+            QString hostportLine=listGetLine(hostfile,"Server");
+            tcpPort=hostportLine.split("|")[1];
+            /***************************************************/
+       QString uport=tcpPort;
+            std::reverse(uport.begin(), uport.end());
+          //  QHostAddress *host  = new QHostAddress("192.168.63.254");
+         //  QHostAddress *server = new QHostAddress("192.168.23.253");
+
+
+           udpServerSend = new QUdpSocket();
+           udpTraySend= new QUdpSocket();
+           udpServerGet = new QUdpSocket();
+           udpTrayGet=new QUdpSocket();
+           udpGuiGet=new QUdpSocket();
+
+           udpServerGet->bind(uport.toInt(), QUdpSocket::ShareAddress);
+           udpTrayGet->bind(51511, QUdpSocket::ShareAddress);
+           udpGuiGet->bind(51521, QUdpSocket::ShareAddress);
+
+           //udpSocketGet->bind(*host, uport.toInt());
+            QObject::connect(udpServerGet,&QUdpSocket::readyRead,[&](){udpServerGetSlot();});
+            QObject::connect(udpTrayGet,&QUdpSocket::readyRead,[&](){udpTrayGetSlot();});
+            QObject::connect(udpGuiGet,&QUdpSocket::readyRead,[&](){udpGuiGetSlot();});
+
+            qDebug()<<tcpPort<<uport<<"udp bağlandı";
+            tcpMesajSendTimerSlot();
+
+        }
+        else
+        {
+            qDebug()<<"server dosyası oluşturuluyor";
+            lst.append("|7879|Server");
+            listToFile(localDir,lst,"hostport");
+            system("chmod 777 /usr/share/e-ag/hostport");
+        }
+
+
+    }
+}
+
+void Client::udpServerSendSlot(QString _data)
+{
     hostAddressMacButtonSlot();
     QStringList hostlist=fileToList("/usr/share/e-ag/","hostport");
+
+    if(udpServerSend == nullptr){
+        qDebug()<<"bağlı değil";
+        socketBaglama();//bağlı değilse bağlan
+    }
+
+    //qDebug()<<"mesaj gidecek: "<<_data;
+    //return;
+
     for(int i=0;i<hostlist.count();i++)
     {
         if(hostlist[i]!="")
@@ -273,109 +283,62 @@ void Client::udpSocketSendTServer(QString _data)
                     {
                         QString msg="Client Mesaj|"+ipmaclist[k].ip+"|"+ipmaclist[k].mac+"|"+_data;
                         QByteArray datagram = msg.toUtf8();// +QHostAddress::LocalHost;
-                        udpSocketSend->writeDatagram(datagram,QHostAddress(serverlist[0]), tcpPort.toInt());
-                        qDebug()<<"server'a mesaj gönderildi:"<< serverlist[0]<<_data;
+                        udpServerSend->writeDatagram(datagram,QHostAddress(serverlist[0]), tcpPort.toInt());
+                        qDebug()<<"server'a mesaj gönderildi:"<< tcpPort<<serverlist[0]<<_data;
                     }
                 }
             }
         }
     }
 }
-void Client::udpSocketGetMyDispRead()
+
+void Client::udpTrayGetSlot()
 {
     QByteArray datagram;
     QStringList mesaj;
 
-    while (udpSocketGetMyDisp->hasPendingDatagrams()) {
-        datagram.resize(int(udpSocketGetMyDisp->pendingDatagramSize()));
+    while (udpTrayGet->hasPendingDatagrams()) {
+        datagram.resize(int(udpTrayGet->pendingDatagramSize()));
         QHostAddress sender;
         quint16 senderPort;
 
-        udpSocketGetMyDisp->readDatagram(datagram.data(), datagram.size(), &sender, &senderPort);
+        udpTrayGet->readDatagram(datagram.data(), datagram.size(), &sender, &senderPort);
 
         QString rmesaj=datagram.constData();
-        ///qDebug()<<"x11'den Gelen Udp Mesaj:"<<rmesaj;
-        x11env=rmesaj;
-
+      //  qDebug()<<"udpClientTrayRead:"<<rmesaj;
+        clientTrayEnv=rmesaj;
     }
 }
 
-void Client::udpSocketGetMyEnvRead()
+void Client::udpGuiGetSlot()
 {
     QByteArray datagram;
     QStringList mesaj;
 
-    while (udpSocketGetMyEnv->hasPendingDatagrams()) {
-        datagram.resize(int(udpSocketGetMyEnv->pendingDatagramSize()));
+    while (udpGuiGet->hasPendingDatagrams()) {
+        datagram.resize(int(udpGuiGet->pendingDatagramSize()));
         QHostAddress sender;
         quint16 senderPort;
 
-        udpSocketGetMyEnv->readDatagram(datagram.data(), datagram.size(), &sender, &senderPort);
+        udpGuiGet->readDatagram(datagram.data(), datagram.size(), &sender, &senderPort);
 
         QString rmesaj=datagram.constData();
-     ///   qDebug()<<"e-ag-run'dan Gelen Udp Mesaj:"<<rmesaj;
-        myenv=rmesaj;
-
-
-        /******************************************************/
-          if(x11env=="")
-              x11env="noLogin|0|0|0|0";
-
-         // else
-          //    x11env=x11env;
-         // QString result1=arg;
-          bool sshState;
-          int vncState;
-          bool ftpState;
-          /*************************************/
-          if (getIpPortStatus("systemctl status ssh.service|grep 'running'|wc -l",0)=="open")
-              sshState=true;
-          else sshState=false;
-          /*************************************/
-          if (getIpPortStatus("systemctl status e-ag-x11vncdesktop.service|grep '5900'|wc -l",1)=="open")
-              vncState=5900;
-          else if (getIpPortStatus("systemctl status e-ag-x11vnclogin.service|grep '5902'|wc -l",1)=="open")
-              vncState=5902;
-          else vncState=0;
-          /*************************************/
-          if (getIpPortStatus("systemctl status vsftpd.service|grep 'running'|wc -l",0)=="open")
-              ftpState=true;
-          else ftpState=false;
-          /*************************************/
-          /// qDebug()<<"durum:"<<x11env<<result1;
-          QString data="portStatus|mydisp|"+x11env+"|"+myenv+"|"+QString::number(sshState)+"|"+QString::number(vncState)+"|"+QString::number(ftpState);
-          if(tempdata!=data)
-          {
-              udpSocketSendTServer(data);
-              tempdata=data;
-              dataSayac=1;
-          }
-          else dataSayac++;
-          if(dataSayac>1)
-          {
-              udpSocketSendTServer(data);
-              tempdata=data;
-              dataSayac=0;
-          }
-
-          data="";
-          x11env="";
-          myenv="";
-
-
+        //qDebug()<<"udpClientGuiRead:"<<rmesaj
+        clientGuiEnv=rmesaj;
     }
 }
-void Client::udpSocketGetRead()
+
+void Client::udpServerGetSlot()
 {
     QByteArray datagram;
     QStringList mesaj;
 
-    while (udpSocketGet->hasPendingDatagrams()) {
-        datagram.resize(int(udpSocketGet->pendingDatagramSize()));
+    while (udpServerGet->hasPendingDatagrams()) {
+        datagram.resize(int(udpServerGet->pendingDatagramSize()));
         QHostAddress sender;
         quint16 senderPort;
 
-        udpSocketGet->readDatagram(datagram.data(), datagram.size(), &sender, &senderPort);
+        udpServerGet->readDatagram(datagram.data(), datagram.size(), &sender, &senderPort);
 
         QString rmesaj=datagram.constData();
         mesaj=rmesaj.split("|");
@@ -383,9 +346,10 @@ void Client::udpSocketGetRead()
         ///  qDebug()<<"Gelen Udp Mesaj:"<<mesaj[0]<<mesaj[1]<<mesaj[2]<<mesaj[3];
         qDebug()<<"Gelen Udp Mesaj:"<<mesaj;
         QString x11mesaj="";
-        bool sendStatus=true;
+        bool sendStatus=false;
         if(mesaj[0]=="hostport")
         {
+            qDebug()<<"Gelen Udp Mesajı hosport.........:"<<mesaj[4];
             //qDebug()<<"Gelen Udp Mesaj:"<<mesaj[2];
             QString _ip=mesaj[1];
             QString _port=mesaj[3];
@@ -476,23 +440,23 @@ void Client::udpSocketGetRead()
         {
             /*************************************/
             if (getIpPortStatus("systemctl status ssh.service|grep 'running'|wc -l",0)=="open")
-                udpSocketSendTServer("sshporttestopen");
-            else udpSocketSendTServer("sshporttestclose");
+                udpServerSendSlot("sshporttestopen");
+            else udpServerSendSlot("sshporttestclose");
         }
         if(mesaj[0]=="vncporttest")
         {
             /*************************************/
             if (getIpPortStatus("systemctl status e-ag-x11vncdesktop.service|grep '5900'|wc -l",1)=="open"||
                     getIpPortStatus("systemctl status e-ag-x11vnclogin.service|grep '5902'|wc -l",1)=="open")
-                udpSocketSendTServer("vncporttestopen");
-            else udpSocketSendTServer("vncporttestclose");
+                udpServerSendSlot("vncporttestopen");
+            else udpServerSendSlot("vncporttestclose");
         }
         if(mesaj[0]=="ftpporttest")
         {
             /*************************************/
             if (getIpPortStatus("systemctl status vsftpd.service|grep 'running'|wc -l",0)=="open")
-                udpSocketSendTServer("ftpporttestopen");
-            else udpSocketSendTServer("ftpporttestclose");
+                udpServerSendSlot("ftpporttestopen");
+            else udpServerSendSlot("ftpporttestclose");
         }
         if(mesaj[0]=="kilitstatetrue")
         {
@@ -502,7 +466,7 @@ void Client::udpSocketGetRead()
         }
         if(mesaj[0]=="kilitstatefalse")
         {
-            udpSocketSendTServer("kilitstatetestclose");
+            udpServerSendSlot("kilitstatetestclose");
             x11mesaj=rmesaj; sendStatus=true;
         }
         if(mesaj[0]=="transparankilitstatetrue")
@@ -581,16 +545,11 @@ void Client::udpSocketGetRead()
         {
             x11mesaj=rmesaj; sendStatus=true;
         }
-        if(mesaj[0]=="konsolexpect")
-        {
-            komutSudoExpect(mesaj[1],mesaj[6],mesaj[7]);
-
-        }
         if(mesaj[0]=="x11komut")
         {
             // qDebug()<<"Client-Gelen Mesaj:"<<rmesaj;
             QString komut=mesaj[0]+"|"+mesaj[1]+"|"+mesaj[2]+"|"+mesaj[3]+"|"+mesaj[4]+"|"+mesaj[5]+"|"+mesaj[6]+"|"+mesaj[7];
-            qDebug()<<"son hali:"<<komut;
+            qDebug()<<"ClientTray'a gonderildi: "<<komut;
             x11mesaj=komut; sendStatus=true;
         }
         if(mesaj[0]=="pckapat")
@@ -606,7 +565,7 @@ void Client::udpSocketGetRead()
         if(sendStatus)
         {
             QByteArray datagram = x11mesaj.toUtf8();// +QHostAddress::LocalHost;
-            udpSocketSendX11Mesaj->writeDatagram(datagram,QHostAddress::LocalHost, 5556);
+            udpTraySend->writeDatagram(datagram,QHostAddress::LocalHost, 51512);
             sendStatus=false;
             x11mesaj="";
         }
@@ -659,43 +618,6 @@ void Client::webBlockAktifPasif()
 
 }
 
-void Client::komutSudoExpect(QString komut,QString username,QString password)
-{
-    qDebug()<<"komutexecute:"<<komut<<username<<password;
-
-    QStringList liste;
-    liste<<"#!/usr/bin/expect";
-    liste<<"spawn su - "+username;
-    liste<<"expect \"Parola:\"";
-    liste<<"send \""+password+"\\n\"";
-    liste<<"send \""+password+"\\n\"";
-    liste<<"send \"echo "+password+"|sudo -S bash -e \""+komut+"\"\\n\"";
-    liste<<"send \"exit\\n\"";
-    liste<<"interact";
-   // qDebug()<<"a0";
-    listToFile("/home/"+username+"/",liste,"run.sh");
-//qDebug()<<"a1";
-    QString kmt22="chmod 777 /home/"+username+"/run.sh";
-  // qDebug()<<"a11";
-    system(kmt22.toStdString().c_str());
-
-//qDebug()<<"a2";
-    QString result="";
-    QStringList arguments;
-    arguments << "-c" << QString("/home/"+username+"/run.sh");
-    QProcess process;
-    process.start("/bin/bash",arguments);
-    if(process.waitForFinished())
-    {
-        // version = process.readAll();
-        //   result.chop(3);
-    }
-
-    QString kmt24="rm -rf /home/"+username+"/run.sh";
-    system(kmt24.toStdString().c_str());
-//qDebug()<<"finalll";
-}
-
 QString Client::getIpPortStatus(QString service,int number)
 {
     QString result="";
@@ -728,8 +650,6 @@ QString Client::getIpPortStatus(QString service,int number)
     if(result.toInt()>0){ return "open";}
     else {return "close";}
 }*/
-
-
 
 QStringList Client::listRemove(QStringList list,QString data)
  {

@@ -46,10 +46,12 @@
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
  {
-    udpSocketSendMyDisp = new QUdpSocket();
-    udpSocketGetX11Mesaj=new QUdpSocket();;
-    udpSocketGetX11Mesaj->bind(5556, QUdpSocket::ShareAddress);
-    QObject::connect(udpSocketGetX11Mesaj,&QUdpSocket::readyRead,[&](){udpSocketGetX11MesajRead();});
+    //udpSocketSendMyDisp = new QUdpSocket();
+    udpConsoleGet=new QUdpSocket();
+    udpConsoleSend = new QUdpSocket();
+
+    udpConsoleGet->bind(51512, QUdpSocket::ShareAddress);
+    QObject::connect(udpConsoleGet,&QUdpSocket::readyRead,[&](){udpConsoleGetSlot();});
 
     /*******************************************************************/
     webblockcb= new QCheckBox("Her Açılışta Web Sitelerini Engelle.");
@@ -91,7 +93,7 @@ MainWindow::MainWindow(QWidget *parent) :
       timergizle->start(1);
 
 /***************************************************************/
-        webBlockAktifPasif();
+        //webBlockAktifPasif();
 /***************************************************************/
     QStringList arguments;
         arguments << "-c" << QString("printenv USER");
@@ -123,7 +125,7 @@ MainWindow::MainWindow(QWidget *parent) :
         }
 
  /**************************************************************************/
-        QTimer *mydispTimer = new QTimer();
+      /*  QTimer *mydispTimer = new QTimer();
         QObject::connect(mydispTimer, &QTimer::timeout, [&](){
 
             x11mydispresult=x11user+"|"+
@@ -137,21 +139,37 @@ MainWindow::MainWindow(QWidget *parent) :
         });
         mydispTimer->start(2000);
 
+        /**************************************************************************/
+        QTimer *udpSocketSendConsoleTimer = new QTimer();
+        QObject::connect(udpSocketSendConsoleTimer, &QTimer::timeout, [&](){
+
+            x11mydispresult=x11user+"|"+
+                              x11display+"|"+
+                              QString::number(kilitstate)+"|"+
+                              QString::number(transparankilitstate)+"|"+
+                              QString::number(ekranimagestate);
+            QByteArray datagram = x11mydispresult.toUtf8();// +QHostAddress::LocalHost;
+            udpConsoleSend->writeDatagram(datagram,QHostAddress::LocalHost, 51511);
+            qDebug()<<"client console  gönderildi:"<<x11mydispresult;
+        });
+        udpSocketSendConsoleTimer->start(2000);
+
+
         /***************************************************************************/
 
 
        }
 
-void MainWindow::udpSocketGetX11MesajRead()
+void MainWindow::udpConsoleGetSlot()
 {
     QByteArray datagram;
 
-    while (udpSocketGetX11Mesaj->hasPendingDatagrams()) {
-        datagram.resize(int(udpSocketGetX11Mesaj->pendingDatagramSize()));
+    while (udpConsoleGet->hasPendingDatagrams()) {
+        datagram.resize(int(udpConsoleGet->pendingDatagramSize()));
         QHostAddress sender;
         quint16 senderPort;
 
-        udpSocketGetX11Mesaj->readDatagram(datagram.data(), datagram.size(), &sender, &senderPort);
+        udpConsoleGet->readDatagram(datagram.data(), datagram.size(), &sender, &senderPort);
 
         QString rmesaj=datagram.constData();
      ///   qDebug()<<"x11'den Gelen Udp Mesaj:"<<rmesaj;
@@ -225,7 +243,6 @@ void MainWindow::tcpMessageControlSlot(QString _data)
         qDebug()<<"gelen bilgi:"<<str;
         QStringList lst=str[0].split("|");
         gelenKomut->setText(lst[1]+"  "+lst[2]);
-
 
         if(lst[0]=="dosyatopla")
         {

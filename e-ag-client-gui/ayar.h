@@ -148,19 +148,12 @@ connect(webblockcb, &QCheckBox::clicked, [=]() {
           QStringList ayarlist;
           ayarlist.append("kilitstate|"+QString::number(kilitstate));
           ayarlist.append("webblockstate|"+QString::number(webblockstate));
-        listToFile("/usr/share/e-ag/",ayarlist,"e-ag-x11client.conf");
-        /*     listToFile("/home/"+QDir::homePath().split("/")[2]+"/",ayarlist,"e-ag-x11client.conf");
-       QString kmt18="chmod 777 /home/"+QDir::homePath().split("/")[2]+"/e-ag-x11client.conf";
-          system(kmt18.toStdString().c_str());
-          /*****************************e-ag-x11client********************************/
-       /*   komutSudoExpect("cp /home/"+QDir::homePath().split("/")[2]+"/e-ag-x11client.conf /usr/share/e-ag/",rootusername,rootpassword);
-          komutSudoExpect("chmod 777 /usr/share/e-ag/e-ag-x11client.conf",rootusername,rootpassword);
-
-          QString kmt27="rm -rf /home/"+QDir::homePath().split("/")[2]+"/e-ag-x11client.conf";
-          system(kmt27.toStdString().c_str());
-*/
-          /**********************web site bloglama bölümü***************************/
+          listToFile("/usr/share/e-ag/",ayarlist,"e-ag-x11client.conf");
           webBlockAktifPasif();
+         /* QString mesaj="webblock|"+QString::number(webblockstate)+"||||||";
+          udpGuiServerSend = new QUdpSocket();
+          QByteArray datagram = mesaj.toUtf8();// +QHostAddress::LocalHost;
+          udpGuiServerSend->writeDatagram(datagram,QHostAddress::LocalHost, 51512);
            /***************************************************************************/
           QString sonuc=myMessageBox("e-ag", "\n"
                                              "\nAyarlar Kaydedildi..\n"
@@ -204,39 +197,7 @@ connect(webblockcb, &QCheckBox::clicked, [=]() {
     return ayarPage;
 }
 
-void MainWindow::komutSudoExpect(QString komut,QString username,QString password)
-{
-    QStringList liste;
-    liste<<"#!/usr/bin/expect";
-    liste<<"spawn su - "+username;
-    liste<<"expect \"Parola:\"";
-    liste<<"send \""+password+"\\n\"";
-    liste<<"send \""+password+"\\n\"";
-    liste<<"send \"echo "+password+"|sudo -S "+komut+"\\n\"";
-    liste<<"send \"exit\\n\"";
-    liste<<"interact";
-    listToFile("/home/"+QDir::homePath().split("/")[2]+"/",liste,"run.sh");
 
-
-    QString kmt22="chmod 777 /home/"+QDir::homePath().split("/")[2]+"/run.sh";
-    system(kmt22.toStdString().c_str());
-
-
-    QString result="";
-    QStringList arguments;
-    arguments << "-c" << QString("/home/"+QDir::homePath().split("/")[2]+"/run.sh");
-    QProcess process;
-    process.start("/bin/bash",arguments);
-    if(process.waitForFinished())
-    {
-        // version = process.readAll();
-        //   result.chop(3);
-    }
-
-    QString kmt24="rm -rf /home/"+QDir::homePath().split("/")[2]+"/run.sh";
-    system(kmt24.toStdString().c_str());
-
-}
 void MainWindow::cellDoubleClicked(int iRow, int iColumn)
 {
      QString webadres= twl->item(iRow, 0)->text();

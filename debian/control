@@ -20,5 +20,6 @@ Depends: ${shlibs:Depends}, ${misc:Depends},
 	vsftpd,
 	xtightvncviewer,
 	net-tools,
-	ethtool
+	ethtool,
+	iptables
 Description: E-Ag İsteci Konsol Uygulaması

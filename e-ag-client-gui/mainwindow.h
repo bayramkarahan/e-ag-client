@@ -62,7 +62,7 @@ public slots:
     QString myMessageBox(QString baslik, QString mesaj, QString evet, QString hayir, QString tamam, QMessageBox::Icon icon);
     void cellDoubleClicked(int iRow, int iColumn);
     void hostAddressMacButtonSlot();
-    void komutSudoExpect(QString komut,QString username,QString password);
+
 public:
     explicit MainWindow(QWidget *parent = nullptr);
 
@@ -115,8 +115,8 @@ private:
     QLabel *baslik;
     QTimer *timer;
     QTimer *tcpMesajControlTimer;
-    QUdpSocket *udpSocketSendMyDisp = nullptr;
-    QUdpSocket *udpSocketGetX11Mesaj = nullptr;
+    QUdpSocket *udpGuiServerSend = nullptr;
+
 
 };
 
