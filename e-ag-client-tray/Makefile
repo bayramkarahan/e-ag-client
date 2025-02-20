@@ -37,7 +37,7 @@ MOVE          = mv -f
 TAR           = tar -cf
 COMPRESS      = gzip -9f
 DISTNAME      = e-ag-client-tray1.0.0
-DISTDIR = /home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-tray/.tmp/e-ag-client-tray1.0.0
+DISTDIR = /home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-tray/.tmp/e-ag-client-tray1.0.0
 LINK          = g++
 LFLAGS        = -Wl,-O1
 LIBS          = $(SUBLIBS) /usr/lib/x86_64-linux-gnu/libQt5Widgets.so /usr/lib/x86_64-linux-gnu/libQt5Gui.so /usr/lib/x86_64-linux-gnu/libQt5Network.so /usr/lib/x86_64-linux-gnu/libQt5Core.so -lGL -lpthread   
@@ -394,18 +394,18 @@ compiler_moc_header_clean:
 moc_ekran.cpp: ekran.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-tray/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-tray -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/12 -I/usr/include/x86_64-linux-gnu/c++/12 -I/usr/include/c++/12/backward -I/usr/lib/gcc/x86_64-linux-gnu/12/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ekran.h -o moc_ekran.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-tray/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-tray -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/12 -I/usr/include/x86_64-linux-gnu/c++/12 -I/usr/include/c++/12/backward -I/usr/lib/gcc/x86_64-linux-gnu/12/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ekran.h -o moc_ekran.cpp
 
 moc_mainwindow.cpp: mainwindow.h \
 		ekran.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-tray/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-tray -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/12 -I/usr/include/x86_64-linux-gnu/c++/12 -I/usr/include/c++/12/backward -I/usr/lib/gcc/x86_64-linux-gnu/12/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include mainwindow.h -o moc_mainwindow.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-tray/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-tray -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/12 -I/usr/include/x86_64-linux-gnu/c++/12 -I/usr/include/c++/12/backward -I/usr/lib/gcc/x86_64-linux-gnu/12/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include mainwindow.h -o moc_mainwindow.cpp
 
 moc_singleinstance.cpp: singleinstance.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-tray/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-tray -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/12 -I/usr/include/x86_64-linux-gnu/c++/12 -I/usr/include/c++/12/backward -I/usr/lib/gcc/x86_64-linux-gnu/12/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include singleinstance.h -o moc_singleinstance.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-tray/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-tray -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/12 -I/usr/include/x86_64-linux-gnu/c++/12 -I/usr/include/c++/12/backward -I/usr/lib/gcc/x86_64-linux-gnu/12/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include singleinstance.h -o moc_singleinstance.cpp
 
 compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:
@@ -463,7 +463,7 @@ uninstall_target: FORCE
 
 install_icon: first FORCE
 	@test -d $(INSTALL_ROOT)/usr/share/icons || mkdir -p $(INSTALL_ROOT)/usr/share/icons
-	$(QINSTALL) /home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-tray/icons/e-ag-client.svg $(INSTALL_ROOT)/usr/share/icons/e-ag-client.svg
+	$(QINSTALL) /home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-tray/icons/e-ag-client.svg $(INSTALL_ROOT)/usr/share/icons/e-ag-client.svg
 
 uninstall_icon: FORCE
 	-$(DEL_FILE) -r $(INSTALL_ROOT)/usr/share/icons/e-ag-client.svg
@@ -472,7 +472,7 @@ uninstall_icon: FORCE
 
 install_auto_start: first FORCE
 	@test -d $(INSTALL_ROOT)/etc/xdg/autostart/ || mkdir -p $(INSTALL_ROOT)/etc/xdg/autostart/
-	$(QINSTALL) /home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-tray/e-ag-client-tray.desktop $(INSTALL_ROOT)/etc/xdg/autostart/e-ag-client-tray.desktop
+	$(QINSTALL) /home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-tray/e-ag-client-tray.desktop $(INSTALL_ROOT)/etc/xdg/autostart/e-ag-client-tray.desktop
 
 uninstall_auto_start: FORCE
 	-$(DEL_FILE) -r $(INSTALL_ROOT)/etc/xdg/autostart/e-ag-client-tray.desktop

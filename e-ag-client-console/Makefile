@@ -37,7 +37,7 @@ MOVE          = mv -f
 TAR           = tar -cf
 COMPRESS      = gzip -9f
 DISTNAME      = e-ag-client-console1.0.0
-DISTDIR = /home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-console/.tmp/e-ag-client-console1.0.0
+DISTDIR = /home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-console/.tmp/e-ag-client-console1.0.0
 LINK          = g++
 LFLAGS        = -Wl,-O1
 LIBS          = $(SUBLIBS) /usr/lib/x86_64-linux-gnu/libQt5Network.so /usr/lib/x86_64-linux-gnu/libQt5Core.so -lpthread   
@@ -379,12 +379,12 @@ moc_client.cpp: client.h \
 		filecrud.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-console/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-console -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/12 -I/usr/include/x86_64-linux-gnu/c++/12 -I/usr/include/c++/12/backward -I/usr/lib/gcc/x86_64-linux-gnu/12/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include client.h -o moc_client.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-console/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-console -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/12 -I/usr/include/x86_64-linux-gnu/c++/12 -I/usr/include/c++/12/backward -I/usr/lib/gcc/x86_64-linux-gnu/12/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include client.h -o moc_client.cpp
 
 moc_singleinstance.cpp: singleinstance.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-console/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-console -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/12 -I/usr/include/x86_64-linux-gnu/c++/12 -I/usr/include/c++/12/backward -I/usr/lib/gcc/x86_64-linux-gnu/12/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include singleinstance.h -o moc_singleinstance.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-console/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-console -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/12 -I/usr/include/x86_64-linux-gnu/c++/12 -I/usr/include/c++/12/backward -I/usr/lib/gcc/x86_64-linux-gnu/12/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include singleinstance.h -o moc_singleinstance.cpp
 
 compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:
@@ -432,7 +432,7 @@ uninstall_target: FORCE
 
 install_service: first FORCE
 	@test -d $(INSTALL_ROOT)/lib/systemd/system/ || mkdir -p $(INSTALL_ROOT)/lib/systemd/system/
-	$(QINSTALL_PROGRAM) /home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-console/e-ag-client.service $(INSTALL_ROOT)/lib/systemd/system/e-ag-client.service
+	$(QINSTALL_PROGRAM) /home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-console/e-ag-client.service $(INSTALL_ROOT)/lib/systemd/system/e-ag-client.service
 	-: $(INSTALL_ROOT)/lib/systemd/system/e-ag-client.service
 
 uninstall_service: FORCE
@@ -442,7 +442,7 @@ uninstall_service: FORCE
 
 install_x11servicedesktop: first FORCE
 	@test -d $(INSTALL_ROOT)/lib/systemd/system/ || mkdir -p $(INSTALL_ROOT)/lib/systemd/system/
-	$(QINSTALL) /home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-console/e-ag-x11vncdesktop.service $(INSTALL_ROOT)/lib/systemd/system/e-ag-x11vncdesktop.service
+	$(QINSTALL) /home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-console/e-ag-x11vncdesktop.service $(INSTALL_ROOT)/lib/systemd/system/e-ag-x11vncdesktop.service
 
 uninstall_x11servicedesktop: FORCE
 	-$(DEL_FILE) -r $(INSTALL_ROOT)/lib/systemd/system/e-ag-x11vncdesktop.service
@@ -451,7 +451,7 @@ uninstall_x11servicedesktop: FORCE
 
 install_x11servicelogin: first FORCE
 	@test -d $(INSTALL_ROOT)/lib/systemd/system/ || mkdir -p $(INSTALL_ROOT)/lib/systemd/system/
-	$(QINSTALL) /home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-console/e-ag-x11vnclogin.service $(INSTALL_ROOT)/lib/systemd/system/e-ag-x11vnclogin.service
+	$(QINSTALL) /home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-console/e-ag-x11vnclogin.service $(INSTALL_ROOT)/lib/systemd/system/e-ag-x11vnclogin.service
 
 uninstall_x11servicelogin: FORCE
 	-$(DEL_FILE) -r $(INSTALL_ROOT)/lib/systemd/system/e-ag-x11vnclogin.service
@@ -460,7 +460,7 @@ uninstall_x11servicelogin: FORCE
 
 install_x11passwd: first FORCE
 	@test -d $(INSTALL_ROOT)/usr/bin/ || mkdir -p $(INSTALL_ROOT)/usr/bin/
-	$(QINSTALL_PROGRAM) /home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-console/x11vncpasswd $(INSTALL_ROOT)/usr/bin/x11vncpasswd
+	$(QINSTALL_PROGRAM) /home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-console/x11vncpasswd $(INSTALL_ROOT)/usr/bin/x11vncpasswd
 	-: $(INSTALL_ROOT)/usr/bin/x11vncpasswd
 
 uninstall_x11passwd: FORCE
@@ -470,7 +470,7 @@ uninstall_x11passwd: FORCE
 
 install_webdisablefile: first FORCE
 	@test -d $(INSTALL_ROOT)/usr/share/e-ag/ || mkdir -p $(INSTALL_ROOT)/usr/share/e-ag/
-	$(QINSTALL_PROGRAM) /home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-console/webdisable.sh $(INSTALL_ROOT)/usr/share/e-ag/webdisable.sh
+	$(QINSTALL_PROGRAM) /home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-console/webdisable.sh $(INSTALL_ROOT)/usr/share/e-ag/webdisable.sh
 	-: $(INSTALL_ROOT)/usr/share/e-ag/webdisable.sh
 
 uninstall_webdisablefile: FORCE

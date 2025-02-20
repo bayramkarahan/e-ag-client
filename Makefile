@@ -30,7 +30,7 @@ MOVE          = mv -f
 TAR           = tar -cf
 COMPRESS      = gzip -9f
 DISTNAME      = e-ag-client1.0.0
-DISTDIR = /home/etapadmin/Masaüstü/ag/e-ag-client/.tmp/e-ag-client1.0.0
+DISTDIR = /home/etapadmin/Masaüstü/aa/e-ag-client/.tmp/e-ag-client1.0.0
 SUBTARGETS    =  \
 		sub-e-ag-client-console \
 		sub-e-ag-client-gui \
@@ -39,79 +39,79 @@ SUBTARGETS    =  \
 
 sub-e-ag-client-console-qmake_all:  FORCE
 	@test -d e-ag-client-console/ || mkdir -p e-ag-client-console/
-	cd e-ag-client-console/ && $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-console/e-ag-client-console.pro QMAKE_STRIP=: PREFIX=/usr
+	cd e-ag-client-console/ && $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-console/e-ag-client-console.pro QMAKE_STRIP=: PREFIX=/usr
 	cd e-ag-client-console/ && $(MAKE) -f Makefile qmake_all
 sub-e-ag-client-console: FORCE
 	@test -d e-ag-client-console/ || mkdir -p e-ag-client-console/
-	cd e-ag-client-console/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-console/e-ag-client-console.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -f Makefile
+	cd e-ag-client-console/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-console/e-ag-client-console.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -f Makefile
 sub-e-ag-client-console-make_first: FORCE
 	@test -d e-ag-client-console/ || mkdir -p e-ag-client-console/
-	cd e-ag-client-console/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-console/e-ag-client-console.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -f Makefile 
+	cd e-ag-client-console/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-console/e-ag-client-console.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -f Makefile 
 sub-e-ag-client-console-all: FORCE
 	@test -d e-ag-client-console/ || mkdir -p e-ag-client-console/
-	cd e-ag-client-console/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-console/e-ag-client-console.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -f Makefile all
+	cd e-ag-client-console/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-console/e-ag-client-console.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -f Makefile all
 sub-e-ag-client-console-clean: FORCE
 	@test -d e-ag-client-console/ || mkdir -p e-ag-client-console/
-	cd e-ag-client-console/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-console/e-ag-client-console.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -f Makefile clean
+	cd e-ag-client-console/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-console/e-ag-client-console.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -f Makefile clean
 sub-e-ag-client-console-distclean: FORCE
 	@test -d e-ag-client-console/ || mkdir -p e-ag-client-console/
-	cd e-ag-client-console/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-console/e-ag-client-console.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -f Makefile distclean
+	cd e-ag-client-console/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-console/e-ag-client-console.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -f Makefile distclean
 sub-e-ag-client-console-install_subtargets: FORCE
 	@test -d e-ag-client-console/ || mkdir -p e-ag-client-console/
-	cd e-ag-client-console/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-console/e-ag-client-console.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -f Makefile install
+	cd e-ag-client-console/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-console/e-ag-client-console.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -f Makefile install
 sub-e-ag-client-console-uninstall_subtargets: FORCE
 	@test -d e-ag-client-console/ || mkdir -p e-ag-client-console/
-	cd e-ag-client-console/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-console/e-ag-client-console.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -f Makefile uninstall
+	cd e-ag-client-console/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-console/e-ag-client-console.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -f Makefile uninstall
 sub-e-ag-client-gui-qmake_all:  FORCE
 	@test -d e-ag-client-gui/ || mkdir -p e-ag-client-gui/
-	cd e-ag-client-gui/ && $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-gui/e-ag-client-gui.pro QMAKE_STRIP=: PREFIX=/usr
+	cd e-ag-client-gui/ && $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-gui/e-ag-client-gui.pro QMAKE_STRIP=: PREFIX=/usr
 	cd e-ag-client-gui/ && $(MAKE) -f Makefile qmake_all
 sub-e-ag-client-gui: FORCE
 	@test -d e-ag-client-gui/ || mkdir -p e-ag-client-gui/
-	cd e-ag-client-gui/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-gui/e-ag-client-gui.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -f Makefile
+	cd e-ag-client-gui/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-gui/e-ag-client-gui.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -f Makefile
 sub-e-ag-client-gui-make_first: FORCE
 	@test -d e-ag-client-gui/ || mkdir -p e-ag-client-gui/
-	cd e-ag-client-gui/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-gui/e-ag-client-gui.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -f Makefile 
+	cd e-ag-client-gui/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-gui/e-ag-client-gui.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -f Makefile 
 sub-e-ag-client-gui-all: FORCE
 	@test -d e-ag-client-gui/ || mkdir -p e-ag-client-gui/
-	cd e-ag-client-gui/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-gui/e-ag-client-gui.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -f Makefile all
+	cd e-ag-client-gui/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-gui/e-ag-client-gui.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -f Makefile all
 sub-e-ag-client-gui-clean: FORCE
 	@test -d e-ag-client-gui/ || mkdir -p e-ag-client-gui/
-	cd e-ag-client-gui/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-gui/e-ag-client-gui.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -f Makefile clean
+	cd e-ag-client-gui/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-gui/e-ag-client-gui.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -f Makefile clean
 sub-e-ag-client-gui-distclean: FORCE
 	@test -d e-ag-client-gui/ || mkdir -p e-ag-client-gui/
-	cd e-ag-client-gui/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-gui/e-ag-client-gui.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -f Makefile distclean
+	cd e-ag-client-gui/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-gui/e-ag-client-gui.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -f Makefile distclean
 sub-e-ag-client-gui-install_subtargets: FORCE
 	@test -d e-ag-client-gui/ || mkdir -p e-ag-client-gui/
-	cd e-ag-client-gui/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-gui/e-ag-client-gui.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -f Makefile install
+	cd e-ag-client-gui/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-gui/e-ag-client-gui.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -f Makefile install
 sub-e-ag-client-gui-uninstall_subtargets: FORCE
 	@test -d e-ag-client-gui/ || mkdir -p e-ag-client-gui/
-	cd e-ag-client-gui/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-gui/e-ag-client-gui.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -f Makefile uninstall
+	cd e-ag-client-gui/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-gui/e-ag-client-gui.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -f Makefile uninstall
 sub-e-ag-client-tray-qmake_all:  FORCE
 	@test -d e-ag-client-tray/ || mkdir -p e-ag-client-tray/
-	cd e-ag-client-tray/ && $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-tray/e-ag-client-tray.pro QMAKE_STRIP=: PREFIX=/usr
+	cd e-ag-client-tray/ && $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-tray/e-ag-client-tray.pro QMAKE_STRIP=: PREFIX=/usr
 	cd e-ag-client-tray/ && $(MAKE) -f Makefile qmake_all
 sub-e-ag-client-tray: FORCE
 	@test -d e-ag-client-tray/ || mkdir -p e-ag-client-tray/
-	cd e-ag-client-tray/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-tray/e-ag-client-tray.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -f Makefile
+	cd e-ag-client-tray/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-tray/e-ag-client-tray.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -f Makefile
 sub-e-ag-client-tray-make_first: FORCE
 	@test -d e-ag-client-tray/ || mkdir -p e-ag-client-tray/
-	cd e-ag-client-tray/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-tray/e-ag-client-tray.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -f Makefile 
+	cd e-ag-client-tray/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-tray/e-ag-client-tray.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -f Makefile 
 sub-e-ag-client-tray-all: FORCE
 	@test -d e-ag-client-tray/ || mkdir -p e-ag-client-tray/
-	cd e-ag-client-tray/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-tray/e-ag-client-tray.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -f Makefile all
+	cd e-ag-client-tray/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-tray/e-ag-client-tray.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -f Makefile all
 sub-e-ag-client-tray-clean: FORCE
 	@test -d e-ag-client-tray/ || mkdir -p e-ag-client-tray/
-	cd e-ag-client-tray/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-tray/e-ag-client-tray.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -f Makefile clean
+	cd e-ag-client-tray/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-tray/e-ag-client-tray.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -f Makefile clean
 sub-e-ag-client-tray-distclean: FORCE
 	@test -d e-ag-client-tray/ || mkdir -p e-ag-client-tray/
-	cd e-ag-client-tray/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-tray/e-ag-client-tray.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -f Makefile distclean
+	cd e-ag-client-tray/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-tray/e-ag-client-tray.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -f Makefile distclean
 sub-e-ag-client-tray-install_subtargets: FORCE
 	@test -d e-ag-client-tray/ || mkdir -p e-ag-client-tray/
-	cd e-ag-client-tray/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-tray/e-ag-client-tray.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -f Makefile install
+	cd e-ag-client-tray/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-tray/e-ag-client-tray.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -f Makefile install
 sub-e-ag-client-tray-uninstall_subtargets: FORCE
 	@test -d e-ag-client-tray/ || mkdir -p e-ag-client-tray/
-	cd e-ag-client-tray/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-tray/e-ag-client-tray.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -f Makefile uninstall
+	cd e-ag-client-tray/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-tray/e-ag-client-tray.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -f Makefile uninstall
 
 Makefile: e-ag-client.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++/qmake.conf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/unix.conf \
@@ -280,24 +280,24 @@ uninstall_subtargets: sub-e-ag-client-console-uninstall_subtargets sub-e-ag-clie
 
 sub-e-ag-client-console-check:
 	@test -d e-ag-client-console/ || mkdir -p e-ag-client-console/
-	cd e-ag-client-console/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-console/e-ag-client-console.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -f Makefile check
+	cd e-ag-client-console/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-console/e-ag-client-console.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -f Makefile check
 sub-e-ag-client-gui-check:
 	@test -d e-ag-client-gui/ || mkdir -p e-ag-client-gui/
-	cd e-ag-client-gui/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-gui/e-ag-client-gui.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -f Makefile check
+	cd e-ag-client-gui/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-gui/e-ag-client-gui.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -f Makefile check
 sub-e-ag-client-tray-check:
 	@test -d e-ag-client-tray/ || mkdir -p e-ag-client-tray/
-	cd e-ag-client-tray/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-tray/e-ag-client-tray.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -f Makefile check
+	cd e-ag-client-tray/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-tray/e-ag-client-tray.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -f Makefile check
 check: sub-e-ag-client-console-check sub-e-ag-client-gui-check sub-e-ag-client-tray-check
 
 sub-e-ag-client-console-benchmark:
 	@test -d e-ag-client-console/ || mkdir -p e-ag-client-console/
-	cd e-ag-client-console/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-console/e-ag-client-console.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -f Makefile benchmark
+	cd e-ag-client-console/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-console/e-ag-client-console.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -f Makefile benchmark
 sub-e-ag-client-gui-benchmark:
 	@test -d e-ag-client-gui/ || mkdir -p e-ag-client-gui/
-	cd e-ag-client-gui/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-gui/e-ag-client-gui.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -f Makefile benchmark
+	cd e-ag-client-gui/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-gui/e-ag-client-gui.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -f Makefile benchmark
 sub-e-ag-client-tray-benchmark:
 	@test -d e-ag-client-tray/ || mkdir -p e-ag-client-tray/
-	cd e-ag-client-tray/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-tray/e-ag-client-tray.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -f Makefile benchmark
+	cd e-ag-client-tray/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-tray/e-ag-client-tray.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -f Makefile benchmark
 benchmark: sub-e-ag-client-console-benchmark sub-e-ag-client-gui-benchmark sub-e-ag-client-tray-benchmark
 install:install_subtargets  FORCE
 
@@ -314,13 +314,13 @@ distdir: sub-e-ag-client-console-distdir sub-e-ag-client-gui-distdir sub-e-ag-cl
 
 sub-e-ag-client-console-distdir: FORCE
 	@test -d e-ag-client-console/ || mkdir -p e-ag-client-console/
-	cd e-ag-client-console/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-console/e-ag-client-console.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -e -f Makefile distdir DISTDIR=$(DISTDIR)/e-ag-client-console
+	cd e-ag-client-console/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-console/e-ag-client-console.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -e -f Makefile distdir DISTDIR=$(DISTDIR)/e-ag-client-console
 
 sub-e-ag-client-gui-distdir: FORCE
 	@test -d e-ag-client-gui/ || mkdir -p e-ag-client-gui/
-	cd e-ag-client-gui/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-gui/e-ag-client-gui.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -e -f Makefile distdir DISTDIR=$(DISTDIR)/e-ag-client-gui
+	cd e-ag-client-gui/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-gui/e-ag-client-gui.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -e -f Makefile distdir DISTDIR=$(DISTDIR)/e-ag-client-gui
 
 sub-e-ag-client-tray-distdir: FORCE
 	@test -d e-ag-client-tray/ || mkdir -p e-ag-client-tray/
-	cd e-ag-client-tray/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-tray/e-ag-client-tray.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -e -f Makefile distdir DISTDIR=$(DISTDIR)/e-ag-client-tray
+	cd e-ag-client-tray/ && ( test -e Makefile || $(QMAKE) -o Makefile /home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-tray/e-ag-client-tray.pro QMAKE_STRIP=: PREFIX=/usr ) && $(MAKE) -e -f Makefile distdir DISTDIR=$(DISTDIR)/e-ag-client-tray
 

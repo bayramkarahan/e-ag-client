@@ -37,7 +37,7 @@ MOVE          = mv -f
 TAR           = tar -cf
 COMPRESS      = gzip -9f
 DISTNAME      = e-ag-client-gui1.0.0
-DISTDIR = /home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-gui/.tmp/e-ag-client-gui1.0.0
+DISTDIR = /home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-gui/.tmp/e-ag-client-gui1.0.0
 LINK          = g++
 LFLAGS        = -Wl,-O1
 LIBS          = $(SUBLIBS) /usr/lib/x86_64-linux-gnu/libQt5Widgets.so /usr/lib/x86_64-linux-gnu/libQt5Gui.so /usr/lib/x86_64-linux-gnu/libQt5Network.so /usr/lib/x86_64-linux-gnu/libQt5DBus.so /usr/lib/x86_64-linux-gnu/libQt5Core.so -lGL -lpthread   
@@ -400,7 +400,7 @@ compiler_moc_header_clean:
 moc_mainwindow.cpp: mainwindow.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
-	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-gui/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-gui -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtDBus -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/12 -I/usr/include/x86_64-linux-gnu/c++/12 -I/usr/include/c++/12/backward -I/usr/lib/gcc/x86_64-linux-gnu/12/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include mainwindow.h -o moc_mainwindow.cpp
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-gui/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-gui -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtDBus -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/12 -I/usr/include/x86_64-linux-gnu/c++/12 -I/usr/include/c++/12/backward -I/usr/lib/gcc/x86_64-linux-gnu/12/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include mainwindow.h -o moc_mainwindow.cpp
 
 compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:
@@ -448,7 +448,7 @@ uninstall_target: FORCE
 
 install_desktop_file: first FORCE
 	@test -d $(INSTALL_ROOT)/usr/share/applications/ || mkdir -p $(INSTALL_ROOT)/usr/share/applications/
-	$(QINSTALL) /home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-gui/e-ag-client-gui.desktop $(INSTALL_ROOT)/usr/share/applications/e-ag-client-gui.desktop
+	$(QINSTALL) /home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-gui/e-ag-client-gui.desktop $(INSTALL_ROOT)/usr/share/applications/e-ag-client-gui.desktop
 
 uninstall_desktop_file: FORCE
 	-$(DEL_FILE) -r $(INSTALL_ROOT)/usr/share/applications/e-ag-client-gui.desktop
@@ -457,7 +457,7 @@ uninstall_desktop_file: FORCE
 
 install_icon: first FORCE
 	@test -d $(INSTALL_ROOT)/usr/share/icons || mkdir -p $(INSTALL_ROOT)/usr/share/icons
-	$(QINSTALL) /home/etapadmin/Masaüstü/ag/e-ag-client/e-ag-client-gui/icons/e-ag-client.svg $(INSTALL_ROOT)/usr/share/icons/e-ag-client.svg
+	$(QINSTALL) /home/etapadmin/Masaüstü/aa/e-ag-client/e-ag-client-gui/icons/e-ag-client.svg $(INSTALL_ROOT)/usr/share/icons/e-ag-client.svg
 
 uninstall_icon: FORCE
 	-$(DEL_FILE) -r $(INSTALL_ROOT)/usr/share/icons/e-ag-client.svg
