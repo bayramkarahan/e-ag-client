@@ -20,17 +20,40 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 #pragma once
+// 1️⃣ Qt header’ları önce
+#include <QApplication>
 #include <QMainWindow>
-#include<QLineEdit>
-#include<QMessageBox>
-#include<QSystemTrayIcon>
-#include<QGridLayout>
-#include<ekran.h>
-#include<QTableWidget>
-#include<QCheckBox>
+#include <QLineEdit>
+#include <QMessageBox>
+#include <QSystemTrayIcon>
+#include <QGridLayout>
+#include <QTableWidget>
+#include <QCheckBox>
 #include <QNetworkInterface>
-#include<QObject>
-#include<QUdpSocket>
+#include <QUdpSocket>
+#include <QFileSystemWatcher>
+#include <QTabWidget>
+#include <QLabel>
+#include <QPushButton>
+#include <QFile>
+#include <QFileDialog>
+#include <QRegularExpression>
+#include <QTimeEdit>
+#include <QDate>
+#include <QTimer>
+#include <QTime>
+#include <QMenu>
+#include <QCloseEvent>
+#include <QProcess>
+#include <QAuthenticator>
+#include <QDesktopWidget>
+#include <QtCore/QCoreApplication>
+#include <QObject>
+#include <QDebug>
+
+// 2️⃣ Kendi header’ların
+#include "Database.h"
+#include "ekran.h"
 
 class IpMac
 {
@@ -51,23 +74,38 @@ class MainWindow : public QMainWindow
 
 public:
 virtual void closeEvent ( QCloseEvent * event );
+    /**********************Network Profil*****************************/
+    /*bool selectedNetworkProfil;
+    QString networkIndex;
+    QString networkName;
+    QString networkTcpPort;
+    QString networkBroadCastAddress;
+    QString serverAddress;
+    QString ipAddress;
+    QString macAddress;
+    QString ftpPort;
+    QString rootPath;
+    bool webblockState;
+    bool lockScreenState;
+    QString language;*/
 
 public slots:
+    void clientConfLoad();
     void udpConsoleGetSlot();
-    void webBlockAktifPasif();
-    void tcpMessageControlSlot(QString _data);
+    void networkProfilLoad();
+    void tcpMessageControlSlot(QJsonObject json);
     void  WidgetClosed();
-    void listToFile(QString path, QStringList list, QString filename);
-    QStringList fileToList(QString path,QString filename);
-    QString listGetLine(QStringList list, QString data);
-    QStringList listRemove(QStringList list, QString data);
     void iconActivated(QSystemTrayIcon::ActivationReason);
     void gizle();
     QString myMessageBox(QString baslik, QString mesaj, QString evet, QString hayir, QString tamam, QMessageBox::Icon icon);
-    void kaydetTimerSlot(QString userName,QString passwd);
     void hostAddressMacButtonSlot();
-    void komutSudoExpect(QString komut,QString username,QString password);
     void  widgetShow();
+    QString getSessionInfo(QString id, QString parametre);
+    QString getSeatId();
+    void commandExecute(QString kmt);
+    bool stringToBool(const QString& str) {
+        return str.toLower() == "true"; // Büyük/küçük harf duyarsız karşılaştırma
+    }
 public:
     explicit MainWindow(QWidget *parent = nullptr);
 
@@ -95,11 +133,16 @@ private:
     int en=30;
     int btsayisi=4;
 
-    bool kilitstate=false;
-    bool transparankilitstate=false;
-    bool ekranimagestate=false;
+    bool kilitState=false;
+    bool kilitStateStart=false;
 
-     bool webblockstate;
+    bool transparankilitState=false;
+    bool transparankilitStateStart=false;
+
+    bool ekranimageState=false;
+    bool volumeState=true;
+
+
      QString version;
      QString sudoyetki="";
      QString user;
@@ -121,11 +164,15 @@ private:
     QLabel *baslik;
     QTimer *timer;
     QTimer *tcpMesajControlTimer;
-    Ekran *ekran;
+    //Ekran *ekran;
+    QList<Ekran*> ekranList;
 
     QUdpSocket *udpConsoleGet = nullptr;
     QUdpSocket *udpConsoleSend= nullptr;
-
+    QString serverIp;
+    int sendConsoleCount=0;
+    QFileSystemWatcher clientConfWather;
+    //InputGrabHelper *inputGrab;
 };
 
 #endif // MAINWINDOW_H

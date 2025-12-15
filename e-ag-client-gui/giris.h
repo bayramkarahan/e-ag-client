@@ -24,10 +24,10 @@ QWidget *MainWindow::giris()
     QWidget *girisPage=new QWidget();
     /*******************************************************/
     auto  screenbtn = new QPushButton(girisPage);
-    screenbtn->setFixedSize(QSize(boy*6,boy*6));
-    screenbtn->setIconSize(QSize(boy*6,boy*6));
+    screenbtn->setFixedSize(QSize(boy*60,boy*60));
+    screenbtn->setIconSize(QSize(boy*60,boy*60));
     screenbtn->setAutoFillBackground(true);
-    screenbtn->setIcon(QIcon(":/icons/e-ag-client.svg"));
+    screenbtn->setIcon(QIcon(":/icons/e-ag.svg"));
     screenbtn->setFlat(true);
 
 

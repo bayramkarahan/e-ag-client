@@ -1,0 +1,30 @@
+#!/bin/bash
+# 🔒 Gerçek fiziksel klavyeleri devre dışı bırakır (X11 için)
+
+USER=$(who | awk '/\(:0\)/ {print $1; exit}')
+DISPLAY=":0"
+XAUTHORITY="/home/$USER/.Xauthority"
+
+if [ -z "$USER" ] || [ ! -f "$XAUTHORITY" ]; then
+    echo "❌ X oturumu veya XAUTHORITY bulunamadı."
+    exit 1
+fi
+
+# 🔓 Root erişimine X11 izni ver
+sudo -u "$USER" DISPLAY=$DISPLAY XAUTHORITY=$XAUTHORITY xhost +SI:localuser:root >/dev/null 2>&1
+
+# 🔍 Kernel seviyesinde klavye cihazlarını bul
+KEYBOARD_EVENTS=($(grep -E 'Handlers|EV=' /proc/bus/input/devices | grep -B1 "EV=1200" | grep "Handlers=" | sed -E 's/.*(event[0-9]+).*/\1/'))
+
+echo "🧩 Tespit edilen klavye event cihazları: ${KEYBOARD_EVENTS[*]}"
+
+sudo -u "$USER" DISPLAY=$DISPLAY XAUTHORITY=$XAUTHORITY bash -c '
+for id in $(xinput list | grep -Eo "id=[0-9]+" | cut -d= -f2); do
+    name=$(xinput list --name-only "$id" 2>/dev/null)
+    if xinput list-props "$id" 2>/dev/null | grep -qi "Keyboard"; then
+        xinput disable "$id"
+        echo "⛔ $name (ID: $id) devre dışı bırakıldı"
+    fi
+done
+'
+

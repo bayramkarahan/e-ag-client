@@ -25,15 +25,18 @@ TEMPLATE = app
 CONFIG += c++11
 CONFIG += qdbus
 SOURCES += \
+        hostnamedialog.cpp \
         main.cpp \
         mainwindow.cpp
 
 HEADERS += \
+    hostnamedialog.h \
         mainwindow.h \
-    filecrud.h \
     ayar.h \
     giris.h \
-    hakkinda.h
+    hakkinda.h \
+    networkWidget.h \
+    webblockWidget.h
 
 FORMS +=
 

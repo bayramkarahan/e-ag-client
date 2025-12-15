@@ -26,7 +26,6 @@
 #include<QFile>
 #include<QFileDialog>
 #include<QRegularExpression>
-#include<filecrud.h>
 #include<QTimeEdit>
 #include<QDate>
 #include<QTimer>
@@ -44,30 +43,38 @@
 #include<QApplication>
 #include <stdio.h>
 #include <QtCore/QCoreApplication>
-
-
+#include<webblockWidget.h>
+#include<networkWidget.h>
+#include<QScreen>
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
  {
-    /*******************************************************************/
-    webblockcb= new QCheckBox("Her Açılışta Web Sitelerini Engelle.");
-    twl=new QTableWidget;
-    gelenKomut=new QLabel("-------------------");
-    localDir="/tmp/";
 
-    this->resize(340,300);
-    setFixedWidth(400);
-    setFixedHeight(400);
-    setWindowTitle("e-ag-client-gui");
+    gelenKomut=new QLabel("-------------------");
+    localDir="/usr/share/e-ag/";
+    hostnamelabel=new QLabel();
+    /************************version*******************************************/
+
+    QProcess process;
+    process.start("/bin/bash", {"-c", "dpkg -s e-ag-client | grep -i '^Version:' | awk '{print $2}'"});
+    process.waitForFinished();
+
+    QString version = QString::fromUtf8(process.readAll()).trimmed();
+    setWindowTitle("e-ag-client-gui " + version);
+
     QRect screenGeometry = QApplication::desktop()->screenGeometry();
     int x = (screenGeometry.width()/2 - this->width()/2);
     int y = (screenGeometry.height() - this->height()) / 2;
     this->move(x, y);
+    QSize screenSize = qApp->screens()[0]->size();
+    boy=screenSize.height()/153.6;
+    en=boy*1.1;
+    int e=en;
+    int b=boy;
     this->setStyleSheet("background-color: #dfdfdf;");
-
-
+    this->resize(en*100,boy*80);
        // App icon
-      auto appIcon = QIcon(":/icons/e-ag-client.svg");
+      auto appIcon = QIcon(":/icons/e-ag.svg");
       this->setWindowIcon(appIcon);
 
       aw=ayar();
@@ -80,94 +87,8 @@ MainWindow::MainWindow(QWidget *parent) :
         tw->addTab(aw,"Ayarlar");
         tw->addTab(hakkinda(),"Hakkında");
 
-
-/***************************************************************/
-        webBlockAktifPasif();
-/***************************************************************/
-    QStringList arguments;
-        arguments << "-c" << QString("printenv USER");
-        QProcess process;
-        process.start("/bin/bash",arguments);
-        if(process.waitForFinished())
-        {
-            x11user = process.readAll();
-           /// qDebug()<<"mydisp user bilgi:"<<user;
-               x11user.chop(1);
-        }
-        QStringList argumentss;
-        argumentss << "-c" << QString("printenv DISPLAY");
-
-
-        process.start("/bin/bash",argumentss);
-        if(process.waitForFinished())
-        {
-            x11display = process.readAll();
-            ///qDebug()<<"mydisp display bilgi:"<<display;
-               x11display.chop(1);
-        }
-
-
-        if(!x11display.contains("0", Qt::CaseInsensitive))//!=0
-        {
-             QString kmt20="nohup /usr/bin/x11vnc -forever -loop -noxdamage -repeat -rfbauth /usr/bin/x11vncpasswd -rfbport 5901 -shared &";
-             system(kmt20.toStdString().c_str());
-        }
-
-
        }
 
-
-void MainWindow::webBlockAktifPasif()
-{
-    if(!QFileInfo::exists("/usr/share/e-ag/e-ag-x11client.conf")) return;
-    QStringList ayarlst=fileToList("/usr/share/e-ag/","e-ag-x11client.conf");
-
-
-    /**********************************************************/
-        if(listGetLine(ayarlst,"rootusername")!="")
-        {
-
-            QString strrootusername=listGetLine(ayarlst,"rootusername").split("|")[1];
-            //qDebug()<<strwebblockstate;
-            rootusername=strrootusername;
-        }
-        /**********************************************************/
-            if(listGetLine(ayarlst,"rootpassword")!="")
-            {
-                QString strrootpassword=listGetLine(ayarlst,"rootpassword").split("|")[1];
-                //qDebug()<<strwebblockstate;
-                rootpassword=strrootpassword;
-            }
-
-/**********************************************************/
-    if(listGetLine(ayarlst,"webblockstate")!="")
-    {
-
-        QString strwebblockstate=listGetLine(ayarlst,"webblockstate").split("|")[1];
-        //qDebug()<<strwebblockstate;
-        webblockstate=strwebblockstate.toInt();
-        webblockcb->setChecked(webblockstate);
-    }
-
-    /******************************************************************/
-    if(webblockstate==true)
-    {
-
-        if(QFileInfo::exists("/usr/share/e-ag/webdisable.sh")){
-            QString kmt22="/usr/share/e-ag/webdisable.sh &";
-            system(kmt22.toStdString().c_str());
-        }
-    }
-
-    if(webblockstate==false)
-    {
-        QString kmt22="iptables -F &";
-        system(kmt22.toStdString().c_str());
-
-    }
-       /*********************************************************/
-
-}
 QString MainWindow::myMessageBox(QString baslik, QString mesaj, QString evet, QString hayir, QString tamam, QMessageBox::Icon icon)
 {
     Qt::WindowFlags flags = 0;
@@ -202,7 +123,7 @@ MainWindow::~MainWindow()
 void MainWindow::hostAddressMacButtonSlot()
 {
     QHostAddress localhost = QHostAddress(QHostAddress::LocalHost);
-ipmaclist.clear();
+interfaceList.clear();
     foreach (const QNetworkInterface& networkInterface, QNetworkInterface::allInterfaces()) {
            foreach (const QNetworkAddressEntry& entry, networkInterface.addressEntries()) {
                QHostAddress *hostadres=new QHostAddress(entry.ip().toString());
@@ -214,7 +135,7 @@ ipmaclist.clear();
                   im.mac=networkInterface.hardwareAddress();
                   im.broadcast=entry.broadcast().toString();
                   im.subnet=entry.netmask().toString();
-                  ipmaclist.append(im);
+                  interfaceList.append(im);
                  // qDebug()<<"mac:"<<networkInterface.hardwareAddress();
                   //qDebug()<<"ip  address:"<<entry.ip().toString();
                  // qDebug()<<"broadcast  address:"<<entry.broadcast().toString();
@@ -226,91 +147,3 @@ ipmaclist.clear();
 
 }
 
-QStringList MainWindow::listRemove(QStringList list,QString data)
- {
-       QRegularExpression re(data);
-     for(int i=0;i<list.count();i++)if(list[i].contains(re)) list.removeAt(i);
-    // qDebug()<<list;
-     return list;
- }
-QString MainWindow::listGetLine(QStringList list,QString data)
-{
-    QRegularExpression re(data);
-   for(int i=0;i<list.count();i++) if(list[i].contains(re)) return list[i];
-   //qDebug()<<list;
-   return "";
-}
-QStringList MainWindow::fileToList(QString path, QString filename)
-{
-  FileCrud *fcc=new FileCrud();
-  fcc->dosya=path+filename;
- // qDebug()<<fcc->dosya;
-  QStringList list;
-  for(int i=1;i<=fcc->fileCount();i++)
-  {
-       QString line=fcc->fileGetLine(i);
-      // qDebug()<<line;
-       if(line!="")
-       {
-           line.chop(1);
-           QStringList lst=line.split("|");
-           QString ln="";
-           if(lst.count()>0)ln.append(lst[0]);
-           if(lst.count()>1)ln.append("|").append(lst[1]);
-           if(lst.count()>2)ln.append("|").append(lst[2]);
-           if(lst.count()>3)ln.append("|").append(lst[3]);
-           if(lst.count()>4)ln.append("|").append(lst[4]);
-           if(lst.count()>5)ln.append("|").append(lst[5]);
-           if(lst.count()>6)ln.append("|").append(lst[6]);
-           if(lst.count()>7)ln.append("|").append(lst[7]);
-           if(lst.count()>8)ln.append("|").append(lst[8]);
-           if(lst.count()>9)ln.append("|").append(lst[9]);
-           if(lst.count()>10)ln.append("|").append(lst[10]);
-           if(lst.count()>11)ln.append("|").append(lst[11]);
-           if(lst.count()>12)ln.append("|").append(lst[12]);
-           if(lst.count()>13)ln.append("|").append(lst[13]);
-
-             list <<ln;
-           //qDebug()<<ln;
-           // list <<lst[0]+"|"+lst[1]+"|"+lst[2]+"|"+lst[3]+"|"+lst[4]+"|"+lst[5];
-
-       }
-  }
-     return list;
-}
-void MainWindow::listToFile(QString path,QStringList list, QString filename)
-{
-  FileCrud *fcc=new FileCrud();
-  fcc->dosya=path+filename;
-  fcc->fileRemove();
-  for(int i=0;i<list.count();i++)
-  {
-       QString line=list[i];
-       if(line!="")
-       {
-           //line.chop(1);
-           QStringList lst=line.split("|");
-           //qDebug()<<line;
-           QString ln="";
-           if(lst.count()>0)ln.append(lst[0]);
-           if(lst.count()>1)ln.append("|").append(lst[1]);
-           if(lst.count()>2)ln.append("|").append(lst[2]);
-           if(lst.count()>3)ln.append("|").append(lst[3]);
-           if(lst.count()>4)ln.append("|").append(lst[4]);
-           if(lst.count()>5)ln.append("|").append(lst[5]);
-           if(lst.count()>6)ln.append("|").append(lst[6]);
-           if(lst.count()>7)ln.append("|").append(lst[7]);
-           if(lst.count()>8)ln.append("|").append(lst[8]);
-           if(lst.count()>9)ln.append("|").append(lst[9]);
-           if(lst.count()>10)ln.append("|").append(lst[10]);
-           if(lst.count()>11)ln.append("|").append(lst[11]);
-           if(lst.count()>12)ln.append("|").append(lst[12]);
-           if(lst.count()>13)ln.append("|").append(lst[13]);
-
-           //qDebug()<<ln;
-           fcc->fileWrite(ln);
-
-       }
-
-  }
-}

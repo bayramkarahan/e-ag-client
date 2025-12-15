@@ -1,5 +1,5 @@
 QT -= gui
-QT += network core
+QT += network core printsupport
 CONFIG += console
 
 CONFIG += c++11
@@ -21,19 +21,25 @@ TEMPLATE = app
 SOURCES += \
         main.cpp \
     client.cpp \
-    singleinstance.cpp
+    scdimgserver.cpp \
+    scdimgserverthread.cpp \
+    singleinstance.cpp \
+    userprivilegehelper.cpp
 
 
 HEADERS += \
+    Database.h \
     client.h \
-    filecrud.h \
-    singleinstance.h
+    scdimgserver.h \
+    scdimgserverthread.h \
+    singleinstance.h \
+    userprivilegehelper.h
 
 
 target.path = /usr/bin
 
 
-service.files = e-ag-client.service
+service.files = e-ag-client-console.service
 service.path = /lib/systemd/system/
 
 x11servicedesktop.files = e-ag-x11vncdesktop.service
@@ -41,6 +47,16 @@ x11servicedesktop.path = /lib/systemd/system/
 
 x11servicelogin.files = e-ag-x11vnclogin.service
 x11servicelogin.path = /lib/systemd/system/
+
+debeagscript.files = debeagscript.service
+debeagscript.path = /lib/systemd/system/
+
+eagscript.files = eagscript.service
+eagscript.path = /lib/systemd/system/
+
+
+cleandesktop.files = clean-desktop
+cleandesktop.path = /usr/bin/
 
 
 x11passwd.files = x11vncpasswd
@@ -52,7 +68,14 @@ runfile.path = /usr/bin/
 webdisablefile.files = webdisable.sh
 webdisablefile.path = /usr/share/e-ag/
 
-INSTALLS += target service x11servicedesktop x11servicelogin x11passwd webdisablefile
+lisanss.files = lisans/*
+lisanss.path = /usr/share/doc/e-ag/LICENSES/
+
+script.files = script/*
+script.path = /usr/bin/
+
+INSTALLS += target service x11servicedesktop x11servicelogin x11passwd \
+webdisablefile lisanss script cleandesktop debeagscript eagscript
 
 
 DISTFILES += \

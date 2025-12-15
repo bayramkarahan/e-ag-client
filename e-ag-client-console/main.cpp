@@ -8,6 +8,9 @@
 #include <stdlib.h>
 #include <QtCore/QCoreApplication>
 #include <QtDBus/QtDBus>
+#include "scdimgserver.h"
+#include <QSettings>
+#define  echo QTextStream(stderr) <<
 
 #define SINGLE_INSTANCE ".Client"
 
@@ -32,6 +35,22 @@ int main(int argc, char *argv[])
 
 
         Client *cl=new Client();
+        cl->networkProfilLoad();
+        int ftpPort=0;
+        QString rootPath="";
+        for (const NetProfil &item : cl->NetProfilList) {
+            //if (item.serverAddress=="") continue;
+            if (item.selectedNetworkProfil==false) continue;
+            ftpPort=item.ftpPort.toInt();
+            rootPath=item.rootPath;
+        }
 
-    return a.exec();
+    SCDImgServer srv(0,ftpPort,rootPath);
+
+    if (srv.start())
+    {
+        return a.exec();
+    }
+
+    return 0;
 }

@@ -4,6 +4,11 @@
         <file>icons/save.svg</file>
         <file>icons/lock.png</file>
         <file>icons/transparanlock.png</file>
-        <file>icons/e-ag-client.svg</file>
+        <file>icons/e-ag.svg</file>
+        <file>icons/session.svg</file>
+        <file>icons/webblock.svg</file>
+        <file>icons/remove.svg</file>
+        <file>icons/add.svg</file>
+        <file>icons/hostname.svg</file>
     </qresource>
 </RCC>

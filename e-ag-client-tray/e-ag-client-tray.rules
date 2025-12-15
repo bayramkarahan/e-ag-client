@@ -1,0 +1,5 @@
+polkit.addRule(function(action, subject) {
+        if (action.id == "com.example.e-ag-client-tray") {
+            return polkit.Result.YES;
+        }
+});

@@ -30,7 +30,8 @@
 #include <QNetworkInterface>
 #include<QObject>
 #include<QUdpSocket>
-
+#include<Database.h>
+#include<hostnamedialog.h>
 class IpMac
 {
 public:
@@ -39,6 +40,23 @@ public:
     QString broadcast;
      QString subnet;
 
+};
+class NetProfil
+{
+public:
+    QString networkIndex;
+    bool selectedNetworkProfil;
+    QString networkName;
+    QString serverAddress;
+    QString ipAddress;
+    QString macAddress;
+    QString networkBroadCastAddress;
+    QString networkTcpPort;
+    QString ftpPort;
+    QString rootPath;
+    QString language;
+    bool lockScreenState;
+    bool webblockState;
 };
 namespace Ui {
 class MainWindow;
@@ -49,24 +67,33 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
+    QList<NetProfil> NetProfilList;
 
 public slots:
-
-    void webBlockAktifPasif();
-
-    void listToFile(QString path, QStringList list, QString filename);
-    QStringList fileToList(QString path,QString filename);
-    QString listGetLine(QStringList list, QString data);
-    QStringList listRemove(QStringList list, QString data);
-
     QString myMessageBox(QString baslik, QString mesaj, QString evet, QString hayir, QString tamam, QMessageBox::Icon icon);
-    void cellDoubleClicked(int iRow, int iColumn);
     void hostAddressMacButtonSlot();
-
+    void webBlockWidget();
+    void networkProfilLoad();
+    void networkProfil();
 public:
     explicit MainWindow(QWidget *parent = nullptr);
 
     ~MainWindow();
+    QString font="12";
+    /**********************Network Profil*****************************/
+    bool selectedNetworkProfil;
+    QString networkIndex;
+    QString networkName;
+    QString networkTcpPort;
+    QString networkBroadCastAddress;
+    QString serverAddress;
+    QString ipAddress;
+    QString macAddress;
+    QString ftpPort;
+    QString rootPath;
+    bool webblockState;
+    bool lockScreenState;
+    QString language;
 
 
 private:
@@ -74,7 +101,7 @@ private:
      QString x11display="";
 
      QString x11mydispresult="";
-     QList<IpMac> ipmaclist;
+     QList<IpMac> interfaceList;
      QCheckBox *webblockcb;
      QString rootusername;
      QString rootpassword;
@@ -116,7 +143,7 @@ private:
     QTimer *timer;
     QTimer *tcpMesajControlTimer;
     QUdpSocket *udpGuiServerSend = nullptr;
-
+    QLabel *hostnamelabel;
 
 };
 

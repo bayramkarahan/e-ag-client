@@ -29,12 +29,12 @@ QWidget *MainWindow::hakkinda()
 
     QWidget *hakkindaPage=new QWidget();
     /*******************************************************/
-
+ QString yil=QString::number( QDateTime::currentDateTime().date().year());
    auto *hak=new QLabel(hakkindaPage);
 
     hak->setText("Bu Uygulama Ağ üzerindeki Bilgisayarları Yönetmek İçin Yazılmıştır."
                  "\n"
-                  "\n   Copyright (C) 2025 by Bayram KARAHAN                                    "
+                  "\n   Copyright (C) "+yil+" by Bayram KARAHAN                                    "
                   "\n\n   <bayramk@gmail.com>  <bayramkarahan.blogspot.com>                     "
                   "\n\thttps://github.com/bayramkarahan/e-ag-client                          "
                   "\n\n   This program is free software; you can redistribute it and/or modify  "

@@ -1,31 +1,61 @@
 #!/bin/sh
 
+if [[ -f /etc/gdm3/daemon.conf ]]; then
 sed -i 's/#WaylandEnable=false/WaylandEnable=false/' /etc/gdm3/daemon.conf
 sed -i 's/WaylandEnable=false/WaylandEnable=false/' /etc/gdm3/daemon.conf
 sed -i 's/#WaylandEnable=true/WaylandEnable=false/' /etc/gdm3/daemon.conf
 sed -i 's/WaylandEnable=true/WaylandEnable=false/' /etc/gdm3/daemon.conf
+fi
+if [[ -f /etc/gdm3/custom.conf ]]; then
+sed -i 's/#WaylandEnable=false/WaylandEnable=false/' /etc/gdm3/custom.conf
+sed -i 's/WaylandEnable=false/WaylandEnable=false/' /etc/gdm3/custom.conf
+sed -i 's/#WaylandEnable=true/WaylandEnable=false/' /etc/gdm3/custom.conf
+sed -i 's/WaylandEnable=true/WaylandEnable=false/' /etc/gdm3/custom.conf
+else
+echo 'WaylandEnable=false'>/etc/gdm3/custom.conf
+fi
 
-sed -i 's/AutomaticLogin=ogrenci/#AutomaticLogin=ogrenci/' /etc/gdm3/daemon.conf
-sed -i 's/#AutomaticLogin=ogrenci/#AutomaticLogin=ogrenci/' /etc/gdm3/daemon.conf
-
-#mkdir /usr/share/e-ag
+mkdir -p /usr/share/e-ag
 #chmod 777 /usr/share/e-ag
+systemctl daemon-reload || true
 
+systemctl enable e-ag-client-console.service || true
+systemctl start e-ag-client-console.service || true
 
-systemctl daemon-reload
-systemctl enable e-ag-client.service
-systemctl start e-ag-client.service
-
+systemctl enable e-ag-client-networkprofil.service || true
+systemctl start e-ag-client-networkprofil.service || true
 #systemctl enable ssh.service
 #systemctl start ssh.service
 
-#systemctl enable vsftpd.service
-#systemctl start vsftpd.service
+systemctl enable e-ag-x11vnclogin.service || true
+systemctl start e-ag-x11vnclogin.service || true
 
-systemctl enable e-ag-x11vnclogin.service
-systemctl start e-ag-x11vnclogin.service
+systemctl enable e-ag-x11vncdesktop.service || true
+systemctl start e-ag-x11vncdesktop.service || true
 
-systemctl enable e-ag-x11vncdesktop.service
-systemctl start e-ag-x11vncdesktop.service
+systemctl enable webblock.service || true
+systemctl start webblock.service || true
+
+e-ag-client-tray&
+
+#xrdp
+systemctl stop xrdp || true
+rm -rf /var/log/xrdp || true
+
+mkdir -p /var/log/xrdp || true
+
+touch /var/log/xrdp/xrdp.log || true
+touch /var/log/xrdp/sesman.log || true
+touch /var/log/xrdp.log || true
+touch /var/log/xrdp-sesman.log || true
+
+chown -R xrdp:xrdp /var/log/xrdp || true
+chown xrdp:xrdp /var/log/xrdp.log /var/log/xrdp-sesman.log || true
+
+chmod 755 /var/log/xrdp || true
+chmod 644 /var/log/xrdp/*.log || true
+chmod 644 /var/log/xrdp.log /var/log/xrdp-sesman.log || true
+
+systemctl restart xrdp || true
 
 exit 0

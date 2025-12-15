@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+# clean-desktop : Kullanıcı oturumundaki tüm uygulamaları kapatır, masaüstünü açık bırakır.
+# Root olarak çalıştırılabilir; kullanıcı, display ve XAUTHORITY otomatik tespit edilir.
+
+set -e
+
+# Aktif kullanıcıyı bul
+TARGET_USER=$(loginctl list-sessions --no-legend | awk '$3=="etapadmin" {print $3; exit}')
+if [ -z "$TARGET_USER" ]; then
+    TARGET_USER=$(loginctl list-sessions --no-legend | awk 'NR==1 {print $3; exit}')
+fi
+
+if [ -z "$TARGET_USER" ]; then
+    echo "Kullanıcı bulunamadı!"
+    exit 1
+fi
+
+USER_HOME=$(eval echo "~$TARGET_USER")
+DISPLAY_NUM=$(ps -u "$TARGET_USER" -o cmd= | grep -m1 -Eo ':[0-9]+(\.[0-9]+)?' || echo ":0")
+XAUTH_FILE="$USER_HOME/.Xauthority"
+
+echo "Kullanıcı: $TARGET_USER"
+echo "Display : $DISPLAY_NUM"
+echo "XAuth   : $XAUTH_FILE"
+
+export DISPLAY="$DISPLAY_NUM"
+export XAUTHORITY="$XAUTH_FILE"
+
+echo "Pencereler kapatılıyor..."
+
+sudo -u "$TARGET_USER" DISPLAY="$DISPLAY_NUM" XAUTHORITY="$XAUTH_FILE" bash <<'EOF'
+# wmctrl varsa pencere tabanlı kapatma yap
+if command -v wmctrl >/dev/null 2>&1; then
+    for win in $(wmctrl -l | awk '{print $1}'); do
+        wmctrl -ic "$win" 2>/dev/null || true
+    done
+    sleep 2
+fi
+
+# GNOME / Cinnamon / Xfce / KDE için oturum içi uygulamaları sonlandır
+pkill -u "$USER" -f "nemo|nautilus|thunar|dolphin|gedit|kate|mousepad|xterm|konsole|gnome-terminal|xfce4-terminal|firefox|chromium|brave|libreoffice|evince|okular" || true
+
+# GNOME Shell veya Cinnamon paneli hariç diğer GUI süreçleri
+for p in $(pgrep -u "$USER" -x -f "gnome-|cinnamon-|xfce4-|plasmashell|kwin|ksmserver"); do
+    # Bunlar masaüstü sürecine ait olduğu için kapatma!
+    :
+done
+EOF
+
+echo "Tüm pencere uygulamaları kapatıldı."
+echo "Temiz masaüstü işlemi tamamlandı (kullanıcı: $TARGET_USER, display: $DISPLAY_NUM)"
+
