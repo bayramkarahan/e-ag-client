@@ -17,8 +17,13 @@ NewtworkProfil::NewtworkProfil()
         uport=NetProfilList.first().networkTcpPort;
     std::reverse(uport.begin(), uport.end());
     udpServerGet = new QUdpSocket();
-    udpServerGet->bind(uport.toInt()+uport.toInt(), QUdpSocket::ShareAddress);
+    ////udpServerGet->bind(uport.toInt()+uport.toInt(), QUdpSocket::ShareAddress);
+    udpServerGet->bind(QHostAddress::AnyIPv4, 45454,
+                    QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
+
+    udpServerGet->joinMulticastGroup(QHostAddress("239.255.0.11"));
     QObject::connect(udpServerGet,&QUdpSocket::readyRead,[&](){udpServerGetSlot(); });
+
 }
 
 
