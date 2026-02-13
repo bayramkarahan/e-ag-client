@@ -133,53 +133,74 @@ public:
          return "";
      }
 
-     void ekranMesaj(QString baslik,QString mesaj)
-    {
-        QDesktopWidget widget;
-        QRect desktopScreenSize = widget.availableGeometry(widget.primaryScreen());
-        this->setFixedSize(desktopScreenSize.width()*0.8,200);
-       // qDebug()<<"ekran boyut:"<<desktopScreenSize.width();
-        this->move(desktopScreenSize.width()/2-desktopScreenSize.width()*0.8/2,200);
-       //this->setStyleSheet("background-color: #a3acac");
-        this->setWindowTitle("Mesaj");
-        this->setAttribute(Qt::WA_TranslucentBackground, true);
-        this->setAttribute(Qt::WA_NoSystemBackground, false);
-        //this->setAttribute(Qt::WA_NoBackground,true);
-        this->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint
-                             | Qt::X11BypassWindowManagerHint);
+     void ekranMesaj(QString baslik, QString mesaj)
+     {
+         QDesktopWidget widget;
+         QRect desktopScreenSize = widget.availableGeometry(widget.primaryScreen());
 
-        this->setAttribute(Qt::WA_TranslucentBackground, true);
-        this->setAttribute(Qt::WA_NoSystemBackground, false);
-        this->repaint();
-        QPalette palet;
-        palet.setBrush(QPalette::Background, QColor(163,172,172,255));
-        this->setPalette(palet);  //setZeminColor(myZeminColor);
+         int pencereGenislik = desktopScreenSize.width() * 0.8;
 
-        basliktext->resize(desktopScreenSize.width()*0.8,100);
-        basliktext->move(0,0);
-        basliktext->setText("<center><font size=8>"+baslik+"</font></center>");
+         // İlk genişliği ayarla (yükseklik sonra dinamik verilecek)
+         this->setFixedWidth(pencereGenislik);
 
-        mesajtext->resize(desktopScreenSize.width()*0.8,70);
-        mesajtext->move(0,100);
-        mesajtext->setText("<center><font size=8>"+mesaj+"</font></center>");
+         this->setWindowTitle("Mesaj");
+         this->setAttribute(Qt::WA_TranslucentBackground, true);
+         this->setAttribute(Qt::WA_NoSystemBackground, false);
 
+         this->setWindowFlags(Qt::FramelessWindowHint |
+                              Qt::WindowStaysOnTopHint |
+                              Qt::X11BypassWindowManagerHint);
 
-        kapatButton->setFixedSize(QSize(150,30));
-       // kapatButton->setIconSize(QSize(boy,boy));
-        kapatButton->setStyleSheet("Text-align:center");
-      //  kapatButton->setIcon(QIcon(":/icons/save.svg"));
-       /// kapatButton->setAutoRaise(true);
-        kapatButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-       // kapatButton->setFont(f2);
-        kapatButton->setText("Mesajı Kapat");
-        kapatButton->move(desktopScreenSize.width()*0.8/2-75,170);
-        kapatButton->show();
-        connect(kapatButton, &QToolButton::clicked, [=]() {
-            this->close();
-        });
+         this->repaint();
 
+         QPalette palet;
+         palet.setBrush(QPalette::Background, QColor(163,172,172,255));
+         this->setPalette(palet);
 
-    }
+         // -------- BAŞLIK --------
+         basliktext->setWordWrap(true);
+         basliktext->setFixedWidth(pencereGenislik);
+         basliktext->setText("<center><font size=8>"+baslik+"</font></center>");
+         basliktext->adjustSize();
+         basliktext->move(0,0);
+
+         // -------- MESAJ --------
+         mesaj.replace("\n","<br>");
+
+         mesajtext->setWordWrap(true);
+         mesajtext->setFixedWidth(pencereGenislik);
+         mesajtext->setText("<center><font size=8>"+mesaj+"</font></center>");
+         mesajtext->adjustSize();
+         mesajtext->move(0, basliktext->height());
+
+         // -------- BUTON --------
+         kapatButton->setFixedSize(QSize(150,30));
+         kapatButton->setStyleSheet("Text-align:center");
+         kapatButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+         kapatButton->setText("Mesajı Kapat");
+
+         int butonY = basliktext->height() + mesajtext->height() + 10;
+         kapatButton->move(pencereGenislik/2 - 75, butonY);
+         kapatButton->show();
+
+         connect(kapatButton, &QToolButton::clicked, [=]() {
+             this->close();
+         });
+
+         // -------- PENCERE YÜKSEKLİĞİNİ AYARLA --------
+         int pencereYukseklik = butonY + 40;
+         this->setFixedHeight(pencereYukseklik);
+
+         // -------- TAM ORTALA (X + Y) --------
+         int yeniX = desktopScreenSize.x() +
+                     (desktopScreenSize.width() - pencereGenislik) / 2;
+
+         int yeniY = desktopScreenSize.y() +
+                     (desktopScreenSize.height() - pencereYukseklik) / 2;
+
+         this->move(yeniX, desktopScreenSize.height() * 0.05);
+     }
+
 
      void ekranKilit(QString baslik,QString mesaj)
     {

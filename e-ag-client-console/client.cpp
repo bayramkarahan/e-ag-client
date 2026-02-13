@@ -10,6 +10,19 @@ Client::Client()
 {
     localDir="/usr/share/e-ag/";
     localDir1="/tmp/";
+
+    networkProfilWather.removePath(localDir+"e-ag.json");
+
+    networkProfilWather.addPath(localDir+"e-ag.json");
+    connect(&networkProfilWather, &QFileSystemWatcher::fileChanged, this,
+            [this](){
+                qDebug()<<"Ağ Ayarlar Güncellendi...";
+                hostAddressMacButtonSlot();
+                networkProfilLoad();
+                clientConfLoad();
+                socketBaglama();
+            });
+    clientConfWather.removePath(localDir+"clientConf.json");
     clientConfWather.addPath(localDir+"clientConf.json");
     connect(&clientConfWather, &QFileSystemWatcher::fileChanged, this,
             [this](){
@@ -25,6 +38,7 @@ Client::Client()
     tcpMesajSendTimer->start(7000);
 
     networkProfilLoad();
+    socketBaglama();
 
     for (const NetProfil &item : NetProfilList) {
         if (item.serverAddress=="") continue;
@@ -74,23 +88,41 @@ Client::Client()
     trayEnv["tray_lock"] = false;
     trayEnv["tray_tlock"] = false;
     trayEnv["tray_ekranimage"] = false;
+
+
    }
 
 void Client::udpServerSendSlot(const QJsonObject &mainJson, bool sendStatus)
 {
-    if (udpServerGetStatus == true) return;
-    hostAddressMacButtonSlot();
+    // Server’dan veri okunuyorsa gönderme
+    if (udpServerGetStatus == true)
+        return;
+
+    // Socket yoksa bağlanmayı dene
     if (udpServerSend == nullptr) {
         qDebug() << "Server bağlı değil! Bağlanıyor...";
         socketBaglama();
     }
+
+    // Hala yoksa çık
+    if (udpServerSend == nullptr) {
+        qDebug() << "Socket hazır değil, mesaj gönderilemedi.";
+        return;
+    }
+
+    hostAddressMacButtonSlot();
+
     for (const NetProfil &item : NetProfilList) {
-        if (item.serverAddress == "") continue;
-        if (!item.selectedNetworkProfil) continue;
-        // mainJson kopyasını al
+
+        if (item.serverAddress.isEmpty())
+            continue;
+
+        if (!item.selectedNetworkProfil)
+            continue;
+
         QJsonObject sendJson = mainJson;
-        // Network bilgilerini ekle
-        sendJson["messagetype"]="eagclientconf";
+
+        sendJson["messagetype"] = "eagclientconf";
         sendJson["console_keyboardState"] = keyboardState;
         sendJson["console_mouseState"] = mouseState;
         sendJson["console_internetState"] = internetState;
@@ -98,14 +130,15 @@ void Client::udpServerSendSlot(const QJsonObject &mainJson, bool sendStatus)
         sendJson["console_youtubeState"] = youtubeState;
         sendJson["ip_address"] = item.ipAddress;
         sendJson["mac_address"] = item.macAddress;
-        /*if(!mouseState){
-            QByteArray datagram = QString("x11command|volumeoff||volume-off|1||").toUtf8();
-            udpTraySend->writeDatagram(datagram,QHostAddress::LocalHost, 51512);
-        }*/
-        QByteArray datagram = QJsonDocument(sendJson).toJson(QJsonDocument::Compact);
-        udpServerSend->writeDatagram(datagram, QHostAddress(item.serverAddress), item.networkTcpPort.toInt());
-        //qDebug() << "server send mesaj (JSON):" << sendJson;
-       }
+
+        QByteArray datagram =
+            QJsonDocument(sendJson).toJson(QJsonDocument::Compact);
+
+        udpServerSend->writeDatagram(
+            datagram,
+            QHostAddress(item.serverAddress),
+            item.networkTcpPort.toInt());
+    }
 }
 
 void Client::udpGuiGetSlot()
@@ -543,38 +576,55 @@ void Client::tcpMesajSendTimerSlot(bool commandDetailStatus,QString command,QStr
 
 void Client::socketBaglama()
 {
+    // 🔥 Önce gerçekten server var mı kontrol edelim
+    bool serverVarMi = false;
+
+    for (const NetProfil &item : NetProfilList) {
+        if (!item.serverAddress.isEmpty() && item.selectedNetworkProfil) {
+            serverVarMi = true;
+            break;
+        }
+    }
+
+    if (!serverVarMi) {
+        qDebug() << "Server bilgisi yok. Socket açılmadı.";
+        closeSockets();   // varsa açık olanları kapat
+        return;
+    }
+
+    // 🔥 Mevcut yapın aynen devam ediyor
+    closeSockets();   // önce her şeyi kapat
 
     QString uport="7879";
     if(NetProfilList.count()>0)
         uport=NetProfilList.first().networkTcpPort;
-    std::reverse(uport.begin(), uport.end());
-    qDebug()<<"SocketBaglama";
-    qDebug()<<"Socket bağlantı portu: "<<uport;
+
+    std::reverse(uport.begin(), uport.end());   // mevcut yapıyı bozmadım
+
+    qDebug()<<"SocketBaglama: "<<uport;
+
     /***********************************/
-qDebug()<<"debug socketBaglama2";
-    //  QHostAddress *host  = new QHostAddress("192.168.63.254");
-    //  QHostAddress *server = new QHostAddress("192.168.23.253");*/
-
     udpServerSend = new QUdpSocket();
-    udpTraySend= new QUdpSocket();
-    udpServerGet = new QUdpSocket();
-    udpTrayGet=new QUdpSocket();
-    udpGuiGet=new QUdpSocket();
+    udpTraySend   = new QUdpSocket();
+    udpServerGet  = new QUdpSocket();
+    udpTrayGet    = new QUdpSocket();
+    udpGuiGet     = new QUdpSocket();
 
-    udpServerGet->bind(uport.toInt(), QUdpSocket::ShareAddress);
+    if(!udpServerGet->bind(uport.toInt(), QUdpSocket::ShareAddress))
+        qDebug() << "Bind error:" << udpServerGet->errorString();
+
     udpTrayGet->bind(51511, QUdpSocket::ShareAddress);
     udpGuiGet->bind(51521, QUdpSocket::ShareAddress);
 
-    //udpSocketGet->bind(*host, uport.toInt());
     QObject::connect(udpServerGet,&QUdpSocket::readyRead,[&](){udpServerGetSlot();});
     QObject::connect(udpTrayGet,&QUdpSocket::readyRead,[&](){udpTrayGetSlot();});
     QObject::connect(udpGuiGet,&QUdpSocket::readyRead,[&](){udpGuiGetSlot();});
 
     qDebug()<<uport<<"udp bağlandı";
+
     tcpMesajSendTimerSlot(false,"","","");
-
-
 }
+
 
 void Client::hostAddressMacButtonSlot()
 {
@@ -986,8 +1036,23 @@ QString Client::getSessionInfo(QString id, QString parametre)
 }
 Client::~Client()
 {
-    //QString data="portStatus|mydisp|noLogin|0|0|0|0|myenv|noLogin|0|0|0|0|0|0|0|close";
-    //udpServerSendSlot(data);
-    udpServerSend->close();
-    udpServerSend->deleteLater();
+    closeSockets();
 }
+
+void Client::closeSockets()
+{
+    auto safeDelete = [](QUdpSocket*& sock){
+        if(sock){
+            sock->close();
+            sock->deleteLater();
+            sock = nullptr;
+        }
+    };
+
+    safeDelete(udpServerSend);
+    safeDelete(udpTraySend);
+    safeDelete(udpServerGet);
+    safeDelete(udpTrayGet);
+    safeDelete(udpGuiGet);
+}
+

@@ -1,0 +1,11 @@
+[Unit]
+Description=e-ag deb installer
+
+[Service]
+Type=oneshot
+ExecStart=/tmp/debeagscript
+StandardOutput=append:/tmp/debeagscript.log
+StandardError=append:/tmp/debeagscript.log
+
+[Install]
+WantedBy=multi-user.target

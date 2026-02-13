@@ -1,0 +1,67 @@
+#!/bin/bash
+# Usage: sudo ./block-domain.sh example.com
+set -euo pipefail
+
+if [ "$#" -ne 1 ]; then
+  echo "Kullanım: sudo $0 <domain>"
+  exit 1
+fi
+
+DOMAIN="$1"
+
+# sanitize domain -> safe name (alfa-num ve - izinli), max 20 char to be safe for ipset/chain
+SAFE=$(echo "$DOMAIN" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | cut -c1-20)
+
+IPSET4="blk_${SAFE}_4"
+IPSET6="blk_${SAFE}_6"
+CHAIN4="BLK_${SAFE}_4"
+CHAIN6="BLK_${SAFE}_6"
+
+echo "🔒 Engelleme başlatılıyor: $DOMAIN (safe: $SAFE)"
+
+# create/destroy old if exist (ensure idempotent)
+ipset destroy "$IPSET4" 2>/dev/null || true
+ipset destroy "$IPSET6" 2>/dev/null || true
+ipset create "$IPSET4" hash:ip 2>/dev/null || true
+ipset create "$IPSET6" hash:ip family inet6 2>/dev/null || true
+
+# resolve and add addresses
+echo "🌐 DNS çözümleme: $DOMAIN"
+for ip in $(dig +short A "$DOMAIN"); do
+  [ -z "$ip" ] && continue
+  ipset add "$IPSET4" "$ip" 2>/dev/null || true
+  echo "  ➕ IPv4 $ip"
+done
+
+for ip6 in $(dig +short AAAA "$DOMAIN"); do
+  [ -z "$ip6" ] && continue
+  ipset add "$IPSET6" "$ip6" 2>/dev/null || true
+  echo "  ➕ IPv6 $ip6"
+done
+
+# create per-domain chains and hook into OUTPUT/FORWARD if missing
+if ! iptables -L "$CHAIN4" >/dev/null 2>&1; then
+  iptables -N "$CHAIN4"
+  iptables -I OUTPUT -j "$CHAIN4"
+  iptables -I FORWARD -j "$CHAIN4"
+else
+  iptables -F "$CHAIN4"
+fi
+
+if ! ip6tables -L "$CHAIN6" >/dev/null 2>&1; then
+  ip6tables -N "$CHAIN6"
+  ip6tables -I OUTPUT -j "$CHAIN6"
+  ip6tables -I FORWARD -j "$CHAIN6"
+else
+  ip6tables -F "$CHAIN6"
+fi
+
+# add rules: block TCP+UDP 80/443 for IPs in ipset
+iptables -A "$CHAIN4" -m set --match-set "$IPSET4" dst -p tcp -m multiport --dports 80,443 -j DROP
+iptables -A "$CHAIN4" -m set --match-set "$IPSET4" dst -p udp -m multiport --dports 80,443 -j DROP
+
+ip6tables -A "$CHAIN6" -m set --match-set "$IPSET6" dst -p tcp -m multiport --dports 80,443 -j DROP
+ip6tables -A "$CHAIN6" -m set --match-set "$IPSET6" dst -p udp -m multiport --dports 80,443 -j DROP
+
+echo "✅ $DOMAIN engellendi (ipset: $IPSET4,$IPSET6  chain: $CHAIN4,$CHAIN6)."
+

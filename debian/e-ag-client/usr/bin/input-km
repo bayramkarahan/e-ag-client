@@ -1,0 +1,67 @@
+#!/bin/bash
+# Klavye ve fareyi USB üzerinden disable/enable eden script
+# Root ile çalıştırılmalı, kullanıcı X oturumunu otomatik tespit eder
+# Kullanım:
+#   ./usb-toggle-x.sh keyboard disable
+#   ./usb-toggle-x.sh mouse enable
+#   ./usb-toggle-x.sh all disable
+
+TYPE=$1   # keyboard, mouse veya all
+ACTION=$2 # disable veya enable
+
+if [[ -z "$TYPE" || -z "$ACTION" ]]; then
+    echo "Usage: $0 keyboard|mouse|all disable|enable"
+    exit 1
+fi
+
+VAL=0
+[[ "$ACTION" == "enable" ]] && VAL=1
+
+# Aktif kullanıcı ve DISPLAY tespiti
+USER=$(who | grep -Eo "^[^ ]+" | head -n1)
+DISPLAY=$(who | grep -Eo "\(.*\)" | head -n1 | tr -d '()')
+XAUTH="/home/$USER/.Xauthority"
+
+if [[ -z "$USER" || ! -f "$XAUTH" ]]; then
+    echo "❌ X oturumu veya XAUTHORITY bulunamadı."
+    exit 1
+fi
+
+echo "🔹 Kullanıcı: $USER"
+echo "🔹 DISPLAY: $DISPLAY"
+echo "🔹 Action: $TYPE -> $ACTION"
+
+# USB cihazlarını disable/enable
+for d in /sys/bus/usb/devices/*; do
+    [[ -f "$d/authorized" ]] || continue
+    name=$(cat "$d/product" 2>/dev/null)
+    [[ -z "$name" ]] && continue
+
+    case "$TYPE" in
+        keyboard) [[ "$name" =~ [Kk]B|Keyboard ]] || continue ;;
+        mouse)    [[ "$name" =~ [Mm]ouse|[Pp]oint|[Oo]ptical|Trackball|Touchpad ]] || continue ;;
+        all)      : ;; # tüm USB cihazlar
+        *) continue ;;
+    esac
+
+    # Root üzerinden yaz
+    echo "$VAL" | tee "$d/authorized"
+    echo "✅ $TYPE ($name) -> $ACTION"
+done
+
+# XInput üzerinden de gerçek X oturumu için disable/enable
+sudo -u "$USER" DISPLAY=$DISPLAY XAUTHORITY=$XAUTH bash -c '
+xinput list --name-only | grep -Ei "keyboard|kbd|Translated|HID|pointer|mouse|Trackball|Touchpad" | grep -viE "virtual|xtest|button" | while read -r name; do
+
+    id=$(xinput list --id-only "$name" 2>/dev/null)
+    [[ -n "$id" ]] && {
+        if [[ "'"$ACTION"'" == "disable" ]]; then
+            xinput disable "$id"
+        else
+            xinput enable "$id"
+        fi
+        echo "🖥️ $name (id=$id) -> '"$ACTION"'"
+    fi
+done
+'
+

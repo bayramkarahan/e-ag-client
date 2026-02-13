@@ -1,0 +1,14 @@
+[Desktop Entry]
+Version=1.0
+Name=E-Ag-Client
+Name[tr]=E-Ag-Client
+Type=Application
+Comment=User Acount Fixed Application
+Comment[tr]=e-ag-gui istemci uygulaması
+Terminal=false
+Exec=sh -c "pkexec env DISPLAY=$DISPLAY XAUTHORITY=$XAUTHORITY /usr/bin/e-ag-client-gui"
+Icon=/usr/share/icons/e-ag-client.svg
+Categories=Qt;Utility;
+Keywords=ag;eag;e-ag-gui;
+GenericName=e-ag-gui
+GenericName[tr]=e-ag-client-gui

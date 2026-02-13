@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+# Masaüstü ortamını tespit et
+DESKTOP=$(echo "$XDG_CURRENT_DESKTOP" | tr '[:upper:]' '[:lower:]')
+
+echo "Desktop: $DESKTOP"
+
+# Tüm pencereleri listele (yalnızca taskbar’da görünenler)
+WINDOWS=$(wmctrl -l | awk '{print $1}')
+
+for win in $WINDOWS; do
+    # pencere özelliği al
+    STATE=$(xprop -id "$win" _NET_WM_STATE 2>/dev/null)
+
+    # system tray uygulamaları genelde SkipTaskbar veya BELOW gibi işaretlidir
+    if echo "$STATE" | grep -qi "_NET_WM_STATE_SKIP_TASKBAR"; then
+        echo "Skip tray window: $win"
+        continue
+    fi
+
+    # Panel, dock, wallpaper pencerelerini alma
+    WMCLASS=$(xprop -id "$win" WM_CLASS 2>/dev/null)
+    if echo "$WMCLASS" | grep -Ei "panel|dock|desktop|cinnamon|xfce4-panel|gnome-shell" >/dev/null; then
+        echo "Skipping system window: $win"
+        continue
+    fi
+
+    echo "Closing window: $win"
+    wmctrl -ic "$win"
+done
+
+exit 0
+

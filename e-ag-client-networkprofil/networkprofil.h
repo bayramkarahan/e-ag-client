@@ -10,6 +10,8 @@
 #include<QObject>
 #include<QSysInfo>
 #include<QDir>
+#include<QFileSystemWatcher>
+
 class IpMac
 {
 public:
@@ -35,7 +37,30 @@ public:
     QString language;
     bool lockScreenState;
     bool webblockState;
+
+    bool operator==(const NetProfil& other) const
+    {
+        //networkIndex == other.networkIndex &&
+        return selectedNetworkProfil == other.selectedNetworkProfil &&
+               networkName == other.networkName &&
+               serverAddress == other.serverAddress &&
+               ipAddress == other.ipAddress &&
+               macAddress == other.macAddress &&
+               networkBroadCastAddress == other.networkBroadCastAddress &&
+               networkTcpPort == other.networkTcpPort &&
+               ftpPort == other.ftpPort &&
+               rootPath == other.rootPath &&
+               language == other.language &&
+               lockScreenState == other.lockScreenState &&
+               webblockState == other.webblockState;
+    }
+
+    bool operator!=(const NetProfil& other) const
+    {
+        return !(*this == other);
+    }
 };
+
 
 class NewtworkProfil: public QObject
 {
@@ -63,6 +88,7 @@ private slots:
     QString ip;
     QString tcpPort;
     QUdpSocket *udpServerGet = nullptr;
+    QFileSystemWatcher networkProfilWather;
 };
 
 #endif // NETWORKPROFIL_H

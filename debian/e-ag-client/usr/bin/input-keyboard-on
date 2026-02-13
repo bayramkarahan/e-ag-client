@@ -1,0 +1,21 @@
+#!/bin/bash
+
+echo "🔍 Klavye cihazları aranıyor..."
+
+for dev in /sys/class/input/event*; do
+    name=$(udevadm info -q property --path $dev | grep ID_INPUT_KEYBOARD=1)
+    if [[ -n "$name" ]]; then
+        enabled_file="$dev/device/../enabled"
+
+        if [[ -f "$enabled_file" ]]; then
+            state=$(cat "$enabled_file")
+            if [[ "$state" == "1" ]]; then
+                echo "⚠ Zaten aktif: $dev"
+            else
+                echo 1 > "$enabled_file"
+                echo "🔓 Etkinleştirildi: $dev"
+            fi
+        fi
+    fi
+done
+

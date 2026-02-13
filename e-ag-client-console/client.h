@@ -78,7 +78,7 @@ private slots:
     QString getSessionInfo(QString id, QString parametre);
     void clientConfUpdate(QString field,bool state);
     void clientConfLoad();
-
+    void closeSockets();
 private:
     QTimer *tcpMesajSendTimer;
     QProcess process;
@@ -121,6 +121,7 @@ private:
     QFileSystemWatcher clientConfWather;
 
     QString hostname;
+    QFileSystemWatcher networkProfilWather;
 };
 
 #endif // CLIENT_H

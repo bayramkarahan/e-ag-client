@@ -1,0 +1,50 @@
+#!/bin/bash
+# input-on-pointer.sh — Fiziksel fare/işaretçileri otomatik olarak etkinleştirir (X11 için)
+
+set -e
+
+# Aktif X oturumu olan kullanıcıyı bul
+USER=$(who | grep -E "\(:(0|1|2)" | awk '{print $1}' | head -n 1)
+DISPLAY=$(who | grep -E "\(:(0|1|2)" | sed -E "s/.*\((:[0-9.]+)\).*/\1/" | head -n 1)
+
+# Yedekleme (fallback)
+USER=${USER:-$(logname)}
+DISPLAY=${DISPLAY:-":0"}
+
+XAUTHORITY="/home/$USER/.Xauthority"
+
+if [ -z "$USER" ] || [ ! -f "$XAUTHORITY" ]; then
+    echo "❌ X oturumu bulunamadı veya XAUTHORITY dosyası yok."
+    echo "ℹ️ USER=$USER, DISPLAY=$DISPLAY, XAUTHORITY=$XAUTHORITY"
+    exit 1
+fi
+
+echo "🧩 Kullanıcı: $USER"
+echo "🖥️ DISPLAY: $DISPLAY"
+echo "📁 XAUTHORITY: $XAUTHORITY"
+echo "🔓 Fiziksel FARE / POINTER cihazları yeniden etkinleştiriliyor..."
+echo ""
+
+sudo -u "$USER" env DISPLAY=$DISPLAY XAUTHORITY=$XAUTHORITY bash -s <<'EOF'
+PATTERNS=("mouse" "optical" "logitech" "synaptics" "imexps/2")
+
+echo "🔍 xinput listesi (pointer aygıtları):"
+xinput list | grep -i "pointer" || echo "⚠️ Pointer aygıtı bulunamadı"
+echo ""
+
+for pattern in "${PATTERNS[@]}"; do
+    ids=$(xinput list | grep -iF "$pattern" | sed -E "s/.*id=([0-9]+).*/\1/" || true)
+    if [ -n "$ids" ]; then
+        for id in $ids; do
+            if xinput enable "$id" 2>/dev/null; then
+                echo "✅ $pattern (ID: $id) etkinleştirildi"
+            else
+                echo "⚠️ $pattern (ID: $id) etkinleştirilemedi"
+            fi
+        done
+    else
+        echo "⚠️ '$pattern' için eşleşme bulunamadı"
+    fi
+done
+EOF
+
