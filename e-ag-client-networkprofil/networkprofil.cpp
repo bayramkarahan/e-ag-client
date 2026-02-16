@@ -27,6 +27,36 @@ NewtworkProfil::NewtworkProfil()
                     QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
     udpServerGet->joinMulticastGroup(QHostAddress("239.255.0.11"));
     QObject::connect(udpServerGet,&QUdpSocket::readyRead,[&](){udpServerGetSlot(); });
+
+/*********************kullanılmayan profilleri sil******************************/
+    bool findStatus=false;
+    DatabaseHelper *db=new DatabaseHelper(localDir+"e-ag.json");
+    QJsonArray dizi=db->Oku();
+    if(dizi.count()>0)
+    {
+        for (const QJsonValue &item : dizi) {
+            QJsonObject veri=item.toObject();
+            NetProfil np;
+            np.macAddress=veri["macAddress"].toString();
+
+            for(int j=0;j<interfaceList.count();j++)
+            {
+                if(interfaceList[j].mac==np.macAddress)
+                {
+                    findStatus=true;
+                }
+            }
+            if(!findStatus)
+            {
+                DatabaseHelper *db1=new DatabaseHelper(localDir+"e-ag.json");
+                db1->Sil("macAddress",np.macAddress);
+                findStatus=false;
+            }
+        }
+    }
+
+
+
 }
 
 
@@ -77,10 +107,12 @@ void NewtworkProfil::udpServerGetSlot()
             np.language=getJson["language"].toString();
             np.lockScreenState=getJson["lockScreenState"].toBool();
             np.webblockState=getJson["webblockState"].toBool();
+            bool findStatus=false;
             for(int i=0;i<NetProfilList.count();i++)
             {
                 if(np.networkBroadCastAddress==NetProfilList[i].networkBroadCastAddress)
                 {
+                    findStatus=true;
                     np.ipAddress=NetProfilList[i].ipAddress;
                     np.macAddress=NetProfilList[i].macAddress;
                     if (NetProfilList[i] != np)
@@ -90,6 +122,12 @@ void NewtworkProfil::udpServerGetSlot()
                     }
                     break;
                 }
+            }
+            if(findStatus)
+            {
+                qDebug()<<"Yeni NetProfilList:"<<getJson;
+                networkProfilSave(np);
+                findStatus=false;
             }
         }
     }
@@ -124,7 +162,6 @@ void NewtworkProfil::networkProfilLoad()
     qDebug()<<"networkProfilLoad: "<<NetProfilList.count()
              <<"interfaceList: "<<interfaceList.count();
     hostAddressMacButtonSlot();
-    //if(interfaceList.count()==0)  return;
     DatabaseHelper *db=new DatabaseHelper(localDir+"e-ag.json");
     //QJsonArray dizi=db->Oku();
     QJsonArray dizi=db->Ara("selectedNetworkProfil",true);
@@ -212,7 +249,7 @@ void NewtworkProfil::networkProfilLoad()
 void NewtworkProfil::hostAddressMacButtonSlot()
 {
     QHostAddress localhost = QHostAddress(QHostAddress::LocalHost);
-interfaceList.clear();
+    interfaceList.clear();
     foreach (const QNetworkInterface& networkInterface, QNetworkInterface::allInterfaces()) {
            foreach (const QNetworkAddressEntry& entry, networkInterface.addressEntries()) {
                QHostAddress *hostadres=new QHostAddress(entry.ip().toString());
@@ -232,43 +269,7 @@ interfaceList.clear();
                ///  qDebug()<<"type:"<<networkInterface.name()<<networkInterface.type();
                 QString program="ethtool -s "+networkInterface.name()+" wol g &";
                 system(program.toStdString().c_str());
-                  /*
-                 if(networkInterface.type()==QNetworkInterface::Ethernet)
-                 {
 
-                     //QString program = "notepad.exe"; // Çalıştırılacak uygulamanın yolu (Windows için)
-                     QStringList arguments;
-                     arguments << "&"; // Uygulamaya geçirilecek argümanlar (isteğe bağlı)
-
-                     QProcess *process = new QProcess();
-
-                     // Uygulamanın başlamasıyla ilgili bir sinyali bağlayabiliriz (isteğe bağlı)
-                     QObject::connect(process, &QProcess::started, [=](){
-                         qDebug() << "Uygulama başlatıldı:" << program;
-                     });
-
-                     // Uygulamanın bitmesiyle ilgili bir sinyali bağlayabiliriz (isteğe bağlı)
-                     QObject::connect(process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
-                                      [=](int exitCode, QProcess::ExitStatus exitStatus){
-                                          qDebug() << "Uygulama bitti. Çıkış kodu:" << exitCode
-                                                   << ", Durum:" << (exitStatus == QProcess::NormalExit ? "Normal" : "Çökme");
-                                          process->deleteLater(); // İşlem nesnesini sil
-                                      });
-
-                     // Uygulamayı asenkron olarak başlat
-                     process->start(program, arguments);
-
-                     if (!process->waitForStarted(1000)) { // Uygulamanın başlayıp başlamadığını kısa bir süre kontrol et (isteğe bağlı)
-                         qDebug() << "Uygulama başlatılamadı:" << process->errorString();
-                         process->deleteLater();
-                     } else {
-                         qDebug() << "Uygulama başlatılıyor ve ana akış devam ediyor...";
-                         // Burada ana uygulamanızın diğer işlemleri devam edebilir.
-                     }
-
-                  //system(kmt27.toStdString().c_str());
-
-                 }*/
                }
            }
        }

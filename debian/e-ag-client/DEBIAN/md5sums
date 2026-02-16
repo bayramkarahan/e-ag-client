@@ -10,7 +10,7 @@ d697837ef691e3cbcef95a6b03f530eb  lib/systemd/system/webblock.service
 69a38543fcd32219dda21cbf29946d45  usr/bin/clientscreen
 a64362c3d8c783895565f53437bd788b  usr/bin/e-ag-client-console
 aa1bb238cc294c28f5e22b875165d938  usr/bin/e-ag-client-gui
-b5fa172e9e1d8ae7c983b4267001e673  usr/bin/e-ag-client-networkprofil
+99f8c54f9ada5bfad24a6b3e35bf858b  usr/bin/e-ag-client-networkprofil
 773207c053a5a04c013e1741f624eb48  usr/bin/e-ag-client-tray
 fc87acb94ee85a3f3d8253cff04bc698  usr/bin/input-keyboard-off
 a37daaa57bb47c7b439c78ca1fdde508  usr/bin/input-keyboard-on
@@ -51,7 +51,7 @@ c608ff146987e4a599bc4506fd602884  usr/bin/yedek/input-mouse-off
 b7e492c1669b54a429934d689165cdc8  usr/bin/yedek/kd
 4a084d1288eb3ba8c618f235ecb40b01  usr/bin/yedek/ke
 e0febdb4460de3a590519c8f9bb85b65  usr/share/applications/e-ag-client-gui.desktop
-c736797607498745d05c00ae4fe860aa  usr/share/doc/e-ag-client/changelog.gz
+8bce7feb21ec20ae716ddc07e780afe7  usr/share/doc/e-ag-client/changelog.gz
 c629183aa7076a0f842e45ee4ca501ae  usr/share/doc/e-ag-client/copyright
 11077cd8cc9b2227946365c2a821e383  usr/share/doc/e-ag/LICENSES/LICENSE
 1f8a8b7608a4e89d2e502af82b4ba7ad  usr/share/doc/e-ag/LICENSES/LICENSES/LICENSE.FFmpeg
