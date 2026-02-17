@@ -93,12 +93,6 @@ MainWindow::MainWindow(QWidget *parent) :
         //sendConsoleCount=0;
         QTimer *udpSocketSendConsoleTimer = new QTimer();
         QObject::connect(udpSocketSendConsoleTimer, &QTimer::timeout, [this,udpSocketSendConsoleTimer](){
-            /*x11mydispresult="clientTrayEnv|"+x11user+"|"+x11display;
-            QByteArray datagram = x11mydispresult.toUtf8();// +QHostAddress::LocalHost;
-            udpConsoleSend->writeDatagram(datagram,QHostAddress::LocalHost, 51511);
-            qDebug()<<"client console  gönderildi:"<<x11mydispresult;
-            //sendConsoleCount++;
-            //if(sendConsoleCount>7) udpSocketSendConsoleTimer->stop();*/
             QJsonObject json;
             json["tray_user"] = x11user; //qstring
             json["tray_display"] = x11display; //qstring
@@ -112,7 +106,7 @@ MainWindow::MainWindow(QWidget *parent) :
             udpConsoleSend->writeDatagram(datagram, QHostAddress::LocalHost, 51511);
             qDebug() << "Tray → Console JSON gönderildi:" << datagram;
 
-
+/*
             if(volumeState==false)
             {
                 QJsonObject sendJson{
@@ -126,7 +120,7 @@ MainWindow::MainWindow(QWidget *parent) :
                 };
                 //tcpMessageControlSlot(QString("x11command|volumeoff||volume-off|1||"));
                 tcpMessageControlSlot(sendJson);
-            }
+            }*/
             if(kilitState==true&&kilitStateStart==false)
                 {
                 QJsonObject sendJson{
@@ -368,35 +362,38 @@ void MainWindow::tcpMessageControlSlot(QJsonObject json)
             ekran->show();
             ekranList.append(ekran);
             }
-        else if(submessagetype=="volumeoff")
+        else if(submessagetype == "volumeoff")
         {
-             if(QFile::exists("/usr/bin/wpctl"))
-            {
-                volumeState=false;
-                QString komut="nohup wpctl set-mute @DEFAULT_AUDIO_SINK@ 1 &";
-                system(komut.toStdString().c_str());
-            }
-            if(QFile::exists("/usr/bin/pactl"))
-            {
-                volumeState=false;
-                QString komut1="nohup pactl set-sink-mute @DEFAULT_SINK@ 1 &";
-                system(komut1.toStdString().c_str());
-            }
+            volumeState = false;
 
-        }
-        else if(submessagetype=="volumeon")
-        {
-             if(QFile::exists("/usr/bin/wpctl"))
+            if(QFile::exists("/usr/bin/wpctl")) // PipeWire
             {
-                QString komut="nohup wpctl set-mute @DEFAULT_AUDIO_SINK@ 0 &";
-                system(komut.toStdString().c_str());
-                volumeState=true;
+                QProcess::execute("systemctl", {"--user", "stop", "pipewire"});
+                QProcess::execute("systemctl", {"--user", "stop", "pipewire-pulse"});
+                QProcess::execute("systemctl", {"--user", "mask", "pipewire"});
+                QProcess::execute("systemctl", {"--user", "mask", "pipewire-pulse"});
             }
-            if(QFile::exists("/usr/bin/pactl"))
+            else if(QFile::exists("/usr/bin/pactl")) // PulseAudio
             {
-                QString komut1="nohup pactl set-sink-mute @DEFAULT_SINK@ 0 &";
-                system(komut1.toStdString().c_str());
-                volumeState=true;
+                QProcess::execute("systemctl", {"--user", "stop", "pulseaudio.service"});
+                QProcess::execute("systemctl", {"--user", "mask", "pulseaudio.service"});
+            }
+        }
+        else if(submessagetype == "volumeon")
+        {
+            volumeState = true;
+
+            if(QFile::exists("/usr/bin/wpctl")) // PipeWire
+            {
+                QProcess::execute("systemctl", {"--user", "unmask", "pipewire"});
+                QProcess::execute("systemctl", {"--user", "unmask", "pipewire-pulse"});
+                QProcess::execute("systemctl", {"--user", "start", "pipewire"});
+                QProcess::execute("systemctl", {"--user", "start", "pipewire-pulse"});
+            }
+            else if(QFile::exists("/usr/bin/pactl")) // PulseAudio
+            {
+                QProcess::execute("systemctl", {"--user", "unmask", "pulseaudio.service"});
+                QProcess::execute("systemctl", {"--user", "start", "pulseaudio.service"});
             }
         }
         else if(submessagetype=="videoyayinbaslat")
@@ -435,6 +432,40 @@ void MainWindow::tcpMessageControlSlot(QJsonObject json)
             WindowCloser wc;
             wc.closeDesktopWindows();
         }
+/*
+ *
+        else if(submessagetype=="volumeoff")
+        {
+             if(QFile::exists("/usr/bin/wpctl"))
+            {
+                volumeState=false;
+                QString komut="nohup wpctl set-mute @DEFAULT_AUDIO_SINK@ 1 &";
+                system(komut.toStdString().c_str());
+            }
+            if(QFile::exists("/usr/bin/pactl"))
+            {
+                volumeState=false;
+                QString komut1="nohup pactl set-sink-mute @DEFAULT_SINK@ 1 &";
+                system(komut1.toStdString().c_str());
+            }
+
+        }
+        else if(submessagetype=="volumeon")
+        {
+             if(QFile::exists("/usr/bin/wpctl"))
+            {
+                QString komut="nohup wpctl set-mute @DEFAULT_AUDIO_SINK@ 0 &";
+                system(komut.toStdString().c_str());
+                volumeState=true;
+            }
+            if(QFile::exists("/usr/bin/pactl"))
+            {
+                QString komut1="nohup pactl set-sink-mute @DEFAULT_SINK@ 0 &";
+                system(komut1.toStdString().c_str());
+                volumeState=true;
+            }
+        }
+*/
 
 
 }

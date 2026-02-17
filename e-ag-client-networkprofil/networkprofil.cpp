@@ -32,6 +32,10 @@ NewtworkProfil::NewtworkProfil()
     bool findStatus=false;
     DatabaseHelper *db=new DatabaseHelper(localDir+"e-ag.json");
     QJsonArray dizi=db->Oku();
+    db->Sil("macAddress","99999");
+    db->Sil("macAddress","3333");
+    db->Sil("server_address","");
+
     if(dizi.count()>0)
     {
         for (const QJsonValue &item : dizi) {
@@ -48,13 +52,11 @@ NewtworkProfil::NewtworkProfil()
             }
             if(!findStatus)
             {
-                DatabaseHelper *db1=new DatabaseHelper(localDir+"e-ag.json");
-                db1->Sil("macAddress",np.macAddress);
+                db->Sil("macAddress",np.macAddress);
                 findStatus=false;
             }
         }
     }
-
 
 
 }
