@@ -29,35 +29,6 @@ NewtworkProfil::NewtworkProfil()
     QObject::connect(udpServerGet,&QUdpSocket::readyRead,[&](){udpServerGetSlot(); });
 
 /*********************kullanılmayan profilleri sil******************************/
-    bool findStatus=false;
-    DatabaseHelper *db=new DatabaseHelper(localDir+"e-ag.json");
-    QJsonArray dizi=db->Oku();
-    db->Sil("macAddress","99999");
-    db->Sil("macAddress","3333");
-    db->Sil("server_address","");
-
-    if(dizi.count()>0)
-    {
-        for (const QJsonValue &item : dizi) {
-            QJsonObject veri=item.toObject();
-            NetProfil np;
-            np.macAddress=veri["macAddress"].toString();
-
-            for(int j=0;j<interfaceList.count();j++)
-            {
-                if(interfaceList[j].mac==np.macAddress)
-                {
-                    findStatus=true;
-                }
-            }
-            if(!findStatus)
-            {
-                db->Sil("macAddress",np.macAddress);
-                findStatus=false;
-            }
-        }
-    }
-
 
 }
 
@@ -84,7 +55,7 @@ void NewtworkProfil::udpServerGetSlot()
         if (parseError.error == QJsonParseError::NoError && doc.isObject()) {
             QJsonObject obj = doc.object();
             getJson = obj; // JSON'u direkt sakla
-            qDebug()<<"Server Get Message:"<<getJson;
+            ///qDebug()<<"Server Get Message:"<<getJson;
         } else {
             qWarning() << "Hatalı Mesaj:" << datagram.constData();
             qWarning() << "Tray JSON parse hatası:" << parseError.errorString();
@@ -112,32 +83,60 @@ void NewtworkProfil::udpServerGetSlot()
             bool findStatus=false;
             for(int i=0;i<NetProfilList.count();i++)
             {
-                if(np.networkBroadCastAddress==NetProfilList[i].networkBroadCastAddress)
-                {
-                    findStatus=true;
-                    np.ipAddress=NetProfilList[i].ipAddress;
-                    np.macAddress=NetProfilList[i].macAddress;
-                    if (NetProfilList[i] != np)
+                QString ip1 = np.networkBroadCastAddress;
+                QString ip2 = NetProfilList[i].networkBroadCastAddress;
+
+                QStringList list1 = ip1.split(".");
+                QStringList list2 = ip2.split(".");
+
+
+                    if (list1[0] == list2[0] && list1[1] == list2[1])
                     {
-                        qDebug()<<"NetProfilList Farklı:"<<getJson;
-                        networkProfilSave(np);
+                        ///qDebug()<<"aynı ağda kayıt var"<<ip1<<ip2;
+                        // İlk iki oktet aynı (örnek: 192.168)
+                        findStatus=true;
+                        np.ipAddress=NetProfilList[i].ipAddress;
+                        np.macAddress=NetProfilList[i].macAddress;
+                        if (NetProfilList[i] != np)
+                        {
+                             qDebug()<<"aynı ağda kayıt ekleniyor var"<<ip1<<ip2;
+                            qDebug()<<"NetProfilList Farklı:"<<getJson;
+                            networkProfilSave(np);
+                        }
                     }
-                    break;
+            }
+
+            /*********ilk defa olacaksa ***************/
+            if(!findStatus)
+            {
+                for(int i=0;i<NetProfilList.count();i++)
+                {
+                    QString ip1 = np.networkBroadCastAddress;
+                    QString ip2 = NetProfilList[i].networkBroadCastAddress;
+
+                    QStringList list1 = ip1.split(".");
+                    QStringList list2 = ip2.split(".");
+                    qDebug()<<"hiç  ağda kayıt yok"<<ip1<<ip2;
+
+                        if (list1[0] == list2[0] && list1[1] == list2[1])
+                        {
+                            np.ipAddress=NetProfilList[i].ipAddress;
+                            np.macAddress=NetProfilList[i].macAddress;
+
+                            qDebug()<<"Yeni NetProfilList:"<<getJson;
+                            networkProfilSave(np);
+                            findStatus=false;
+                        }
+
                 }
             }
-            if(findStatus)
-            {
-                qDebug()<<"Yeni NetProfilList:"<<getJson;
-                networkProfilSave(np);
-                findStatus=false;
-            }
+
         }
     }
 }
-
 void NewtworkProfil::networkProfilSave(NetProfil np)
 {
-   // qDebug()<<"server get data:"<<data;
+    qDebug()<<"networkProfilSave:"<<np.serverAddress<<np.ipAddress;
     DatabaseHelper *db=new DatabaseHelper(localDir+"e-ag.json");
     QJsonObject veri;
     veri["networkIndex"]= QString::number(db->getIndex("networkIndex"));
@@ -154,7 +153,10 @@ void NewtworkProfil::networkProfilSave(NetProfil np)
     veri["lockScreenState"]=np.lockScreenState;
     veri["webblockState"]=np.webblockState;
     db->Sil("networkName","networknullip");//ilk ip olmayan eklenen kayıt silinir
-    db->Sil("networkBroadCastAddress",np.networkBroadCastAddress);
+    db->Sil("serverAddress",np.serverAddress);
+    db->Sil("macAddress","99999");
+    db->Sil("macAddress","3333");
+    db->Sil("serverAddress","");
     db->Ekle(veri);
     networkProfilLoad();
 }
@@ -187,7 +189,7 @@ void NewtworkProfil::networkProfilLoad()
                 if(veri["ipAddress"].toString().section(".",0,2)==interfaceList[i].ip.section(".",0,2))
                 {
                     np.ipAddress=interfaceList[i].ip;
-                    np.macAddress=veri["macAddress"].toString();
+                    np.macAddress=interfaceList[i].mac;
                 }
             }
 
@@ -244,9 +246,10 @@ void NewtworkProfil::networkProfilLoad()
             db->Ekle(veri);
         }
         networkProfilLoad();
-        qDebug()<<"eagconf bilgileri farklı güncelleniyor.";
-        system("systemctl restart e-ag-client-console.service");
+
     }
+    //qDebug()<<"eagconf bilgileri farklı güncelleniyor.";
+    ///system("systemctl restart e-ag-client-console.service");
 }
 void NewtworkProfil::hostAddressMacButtonSlot()
 {

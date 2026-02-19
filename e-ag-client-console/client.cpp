@@ -88,6 +88,7 @@ Client::Client()
     trayEnv["tray_lock"] = false;
     trayEnv["tray_tlock"] = false;
     trayEnv["tray_ekranimage"] = false;
+    trayEnv["tray_Version"] = "";
 
 
    }
@@ -130,7 +131,7 @@ void Client::udpServerSendSlot(const QJsonObject &mainJson, bool sendStatus)
         sendJson["console_youtubeState"] = youtubeState;
         sendJson["ip_address"] = item.ipAddress;
         sendJson["mac_address"] = item.macAddress;
-
+        //qDebug()<<"Server giden bilgi"<<sendJson;
         QByteArray datagram =
             QJsonDocument(sendJson).toJson(QJsonDocument::Compact);
 
@@ -192,7 +193,8 @@ void Client::networkProfilLoad()
             np.webblockState=veri["webblockState"].toBool();
             NetProfilList.append(np);
         }
-    }else{
+    }
+   /* else{
         qDebug()<<"Yeni Network Ekleniyor.";
         hostAddressMacButtonSlot();
         for(int i=0;i<interfaceList.count();i++)
@@ -236,7 +238,7 @@ void Client::networkProfilLoad()
             db->Ekle(veri);
         }
         networkProfilLoad();
-    }
+    }*/
 }
 
 void Client::udpServerGetSlot()
@@ -486,7 +488,7 @@ void Client::udpTrayGetSlot()
         if (parseError.error == QJsonParseError::NoError && doc.isObject()) {
             QJsonObject obj = doc.object();
             trayEnv = obj; // JSON'u direkt sakla
-            ///qDebug() << "Tray bilgisi alındı:" << trayEnv;
+           // qDebug() << "Tray bilgisi alındı:" << trayEnv;
         } else {
             ///qWarning() << "Tray JSON parse hatası:" << parseError.errorString();
         }
@@ -515,21 +517,7 @@ void Client::tcpMesajSendTimerSlot(bool commandDetailStatus,QString command,QStr
     consoleEnv["console_hostname"] = hostname;
     consoleEnv["console_desktop_manager"] = info.service;
 
-    //e-ag-tray çalışmıyorsa
-    //if(QFile::exists("/tmp/.e-ag-client-tray")==false)
-    //{
 
-    //}
-
-    /*if (trayEnv.isEmpty()) {
-        trayEnv = QJsonObject();
-        trayEnv["tray_user"] = "noLogin";
-        trayEnv["tray_display"] = "0";
-        trayEnv["tray_volume"] = false;
-        trayEnv["tray_lock"] = false;
-        trayEnv["tray_tlock"] = false;
-        trayEnv["tray_ekranimage"] = false;
-    }*/
 
     // pgrep 15 karakterden fazla olmasın diye tra kullanılmış
     if (!uygulamaCalisiyorMu("pgrep e-ag-client-tra")) {
@@ -540,6 +528,8 @@ void Client::tcpMesajSendTimerSlot(bool commandDetailStatus,QString command,QStr
         trayEnv["tray_lock"] = false;
         trayEnv["tray_tlock"] = false;
         trayEnv["tray_ekranimage"] = false;
+        trayEnv["tray_Version"] = "";
+
     }
 
     bool sshState = (getIpPortStatus("systemctl status ssh.service | grep 'running' | wc -l", 0) == "open");

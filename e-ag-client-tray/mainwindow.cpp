@@ -32,6 +32,11 @@ MainWindow::MainWindow(QWidget *parent) :
                clientConfLoad();   // burada tekrar addPath() çağırılacak
            });
    clientConfLoad();
+   QProcess process;
+   process.start("/bin/bash", {"-c", "dpkg -s e-ag-client | grep -i '^Version:' | awk '{print $2}'"});
+   process.waitForFinished();
+
+   trayVersion = QString::fromUtf8(process.readAll()).trimmed();
 
     udpConsoleGet=new QUdpSocket();
     udpConsoleSend = new QUdpSocket();
@@ -100,6 +105,7 @@ MainWindow::MainWindow(QWidget *parent) :
             json["tray_lock"] = kilitState; //bool
             json["tray_tlock"] = transparankilitState; //bool
             json["tray_ekranimage"] = ekranimageState;  //bool
+            json["tray_Version"] = trayVersion;  //bool
             QJsonDocument doc(json);
             QByteArray datagram = doc.toJson(QJsonDocument::Compact);
 

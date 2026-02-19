@@ -173,6 +173,7 @@ private:
     int sendConsoleCount=0;
     QFileSystemWatcher clientConfWather;
     //InputGrabHelper *inputGrab;
+    QString trayVersion;
 };
 
 #endif // MAINWINDOW_H
