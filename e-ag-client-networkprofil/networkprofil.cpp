@@ -99,7 +99,7 @@ void NewtworkProfil::udpServerGetSlot()
                         np.macAddress=NetProfilList[i].macAddress;
                         if (NetProfilList[i] != np)
                         {
-                             qDebug()<<"aynı ağda kayıt ekleniyor var"<<ip1<<ip2;
+                             qDebug()<<"ağ kayıdı var ekleniyor"<<ip1<<ip2;
                             qDebug()<<"NetProfilList Farklı:"<<getJson;
                             networkProfilSave(np);
                         }
@@ -116,7 +116,7 @@ void NewtworkProfil::udpServerGetSlot()
 
                     QStringList list1 = ip1.split(".");
                     QStringList list2 = ip2.split(".");
-                    qDebug()<<"hiç  ağda kayıt yok"<<ip1<<ip2;
+                    qDebug()<<"ağ kayıdı yok ekleniyor"<<ip1<<ip2;
 
                         if (list1[0] == list2[0] && list1[1] == list2[1])
                         {
@@ -152,8 +152,9 @@ void NewtworkProfil::networkProfilSave(NetProfil np)
     veri["language"]=np.language;
     veri["lockScreenState"]=np.lockScreenState;
     veri["webblockState"]=np.webblockState;
+    db->Sil("networkBroadCastAddress",np.networkBroadCastAddress);
     db->Sil("networkName","networknullip");//ilk ip olmayan eklenen kayıt silinir
-    db->Sil("serverAddress",np.serverAddress);
+    //db->Sil("serverAddress",np.serverAddress);
     db->Sil("macAddress","99999");
     db->Sil("macAddress","3333");
     db->Sil("serverAddress","");
