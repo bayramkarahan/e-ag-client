@@ -88,7 +88,11 @@ Client::Client()
     trayEnv["tray_lock"] = false;
     trayEnv["tray_tlock"] = false;
     trayEnv["tray_ekranimage"] = false;
-    trayEnv["tray_Version"] = "";
+    QProcess process;
+    process.start("/bin/bash", {"-c", "dpkg -s e-ag-client | grep -i '^Version:' | awk '{print $2}'"});
+    process.waitForFinished();
+
+    consoleVersion = QString::fromUtf8(process.readAll()).trimmed();
 
 
    }
@@ -452,8 +456,8 @@ void Client::udpServerGetSlot()
                 process.waitForFinished(-1); // will wait forever until finished
 
                 if(item.networkBroadCastAddress!=""&&
-                    item.serverAddress.section(".",0,2)==item.networkBroadCastAddress.section(".",0,2)&&
-                    item.serverAddress.section(".",0,2)==item.ipAddress.section(".",0,2))
+                    item.serverAddress.section(".",0,1)==item.networkBroadCastAddress.section(".",0,1)&&
+                    item.serverAddress.section(".",0,1)==item.ipAddress.section(".",0,1))
                 {
                     // mainJson kopyasını al
                     QJsonObject sendJson;
@@ -528,7 +532,6 @@ void Client::tcpMesajSendTimerSlot(bool commandDetailStatus,QString command,QStr
         trayEnv["tray_lock"] = false;
         trayEnv["tray_tlock"] = false;
         trayEnv["tray_ekranimage"] = false;
-        trayEnv["tray_Version"] = "";
 
     }
 
@@ -548,6 +551,7 @@ void Client::tcpMesajSendTimerSlot(bool commandDetailStatus,QString command,QStr
     json["console_sshstate"] = sshState;
     json["console_xrdpstate"] = xrdpState;
     json["console_vncports"] = vncports;
+    json["consoleVersion"] = consoleVersion;
 
    /* if (commandDetailStatus) {
         qDebug()<<"komut çıktısı eklendi";
@@ -697,8 +701,8 @@ void Client::commandExecuteSlot(QString command,QString komutMesaji,QString mesa
                 if (item.serverAddress=="") continue;
                 if (item.selectedNetworkProfil==false) continue;
                 if(item.networkBroadCastAddress!=""&&
-                    item.serverAddress.section(".",0,2)==item.networkBroadCastAddress.section(".",0,2)&&
-                    item.serverAddress.section(".",0,2)==item.ipAddress.section(".",0,2))
+                    item.serverAddress.section(".",0,1)==item.networkBroadCastAddress.section(".",0,1)&&
+                    item.serverAddress.section(".",0,1)==item.ipAddress.section(".",0,1))
                 {
                     // mainJson kopyasını al
                     QJsonObject sendServerJson;
@@ -755,8 +759,8 @@ void Client::commandExecuteSlot(QString command,QString komutMesaji,QString mesa
                 if (item.serverAddress=="") continue;
                 if (item.selectedNetworkProfil==false) continue;
                 if(item.networkBroadCastAddress!=""&&
-                    item.serverAddress.section(".",0,2)==item.networkBroadCastAddress.section(".",0,2)&&
-                    item.serverAddress.section(".",0,2)==item.ipAddress.section(".",0,2))
+                    item.serverAddress.section(".",0,1)==item.networkBroadCastAddress.section(".",0,1)&&
+                    item.serverAddress.section(".",0,1)==item.ipAddress.section(".",0,1))
                 {
                     // mainJson kopyasını al
                     QJsonObject sendServerJson;
@@ -795,8 +799,8 @@ void Client::commandExecuteSlot(QString command,QString komutMesaji,QString mesa
             if (item.serverAddress=="") continue;
             if (item.selectedNetworkProfil==false) continue;
             if(item.networkBroadCastAddress!=""&&
-                item.serverAddress.section(".",0,2)==item.networkBroadCastAddress.section(".",0,2)&&
-                item.serverAddress.section(".",0,2)==item.ipAddress.section(".",0,2))
+                item.serverAddress.section(".",0,1)==item.networkBroadCastAddress.section(".",0,1)&&
+                item.serverAddress.section(".",0,1)==item.ipAddress.section(".",0,1))
             {
                 // mainJson kopyasını al
                 QJsonObject sendServerJson;

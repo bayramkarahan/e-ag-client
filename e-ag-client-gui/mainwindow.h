@@ -51,6 +51,7 @@ public:
     QString ipAddress;
     QString macAddress;
     QString networkBroadCastAddress;
+    QString subnet;
     QString networkTcpPort;
     QString ftpPort;
     QString rootPath;

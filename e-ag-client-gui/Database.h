@@ -107,7 +107,37 @@ public:
     // Örnek kullanım:
     //veriSil("ad", "Ayşe");
 
+    void Guncelle(const QString &anahtar,
+                  const QJsonValue &deger,
+                  const QJsonObject &yeniVeri)
+    {
+        QJsonArray veriler = Oku();
+        bool bulundu = false;
 
+        for (int i = 0; i < veriler.size(); ++i)
+        {
+            if (veriler[i].isObject())
+            {
+                QJsonObject obj = veriler[i].toObject();
+
+                if (obj.contains(anahtar) && obj.value(anahtar) == deger)
+                {
+                    veriler[i] = yeniVeri;
+                    bulundu = true;
+                    break; // tek kayıt güncelliyoruz
+                }
+            }
+        }
+
+        if (bulundu)
+        {
+            Kaydet(veriler);
+        }
+        else
+        {
+            qDebug() << "Güncellenecek kayıt bulunamadı!";
+        }
+    }
     void network1Save()
     {
         QString appPath ="/usr/share/e-ag";

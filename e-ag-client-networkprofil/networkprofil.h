@@ -21,6 +21,7 @@ public:
     QString subnet;
 
 };
+
 class NetProfil
 {
 public:
@@ -30,6 +31,7 @@ public:
     QString serverAddress;
     QString ipAddress;
     QString macAddress;
+    QString subnet;
     QString networkBroadCastAddress;
     QString networkTcpPort;
     QString ftpPort;
@@ -41,8 +43,8 @@ public:
     bool operator==(const NetProfil& other) const
     {
         //networkIndex == other.networkIndex &&
-        return selectedNetworkProfil == other.selectedNetworkProfil &&
-               networkName == other.networkName &&
+        // selectedNetworkProfil == other.selectedNetworkProfil &&
+        return networkName == other.networkName &&
                serverAddress == other.serverAddress &&
                ipAddress == other.ipAddress &&
                macAddress == other.macAddress &&
@@ -75,6 +77,19 @@ signals:
     bool stringToBool(const QString& str) {
         return str.toLower() == "true"; // Büyük/küçük harf duyarsız karşılaştırma
     }
+    bool ayniSubnet(const QString &ip1,
+                    const QString &ip2,
+                    const QString &mask)
+    {
+        QHostAddress addr1(ip1);
+        QHostAddress addr2(ip2);
+        QHostAddress netmask(mask);
+
+        quint32 net1 = addr1.toIPv4Address() & netmask.toIPv4Address();
+        quint32 net2 = addr2.toIPv4Address() & netmask.toIPv4Address();
+
+        return net1 == net2;
+    }
 private slots:
     void udpServerGetSlot();
     void networkProfilSave(NetProfil np);
@@ -82,6 +97,7 @@ private slots:
  private:
     QProcess process;
     QList<IpMac> interfaceList;
+    //QList<QNetworkInterface> interfaceList;
     QList<NetProfil> NetProfilList;
     QString localDir;
     QString localDir1;
@@ -89,6 +105,7 @@ private slots:
     QString tcpPort;
     QUdpSocket *udpServerGet = nullptr;
     QFileSystemWatcher networkProfilWather;
+    bool networkProfilSaveStatus;
 };
 
 #endif // NETWORKPROFIL_H

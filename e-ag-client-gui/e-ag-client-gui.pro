@@ -30,6 +30,7 @@ SOURCES += \
         mainwindow.cpp
 
 HEADERS += \
+    Database.h \
     hostnamedialog.h \
         mainwindow.h \
     ayar.h \

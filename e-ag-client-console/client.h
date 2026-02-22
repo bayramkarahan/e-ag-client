@@ -122,6 +122,7 @@ private:
 
     QString hostname;
     QFileSystemWatcher networkProfilWather;
+    QString consoleVersion;
 };
 
 #endif // CLIENT_H
