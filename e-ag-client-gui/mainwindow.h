@@ -56,6 +56,8 @@ public:
     QString ftpPort;
     QString rootPath;
     QString language;
+    QString multicastAddress;
+
     bool lockScreenState;
     bool webblockState;
 };

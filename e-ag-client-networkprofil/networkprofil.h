@@ -37,6 +37,7 @@ public:
     QString ftpPort;
     QString rootPath;
     QString language;
+    QString multicastAddress;
     bool lockScreenState;
     bool webblockState;
 
@@ -106,6 +107,7 @@ private slots:
     QUdpSocket *udpServerGet = nullptr;
     QFileSystemWatcher networkProfilWather;
     bool networkProfilSaveStatus;
+    QString multicastAddress;
 };
 
 #endif // NETWORKPROFIL_H

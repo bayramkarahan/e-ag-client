@@ -21,6 +21,9 @@ NewtworkProfil::NewtworkProfil()
                 }
             });
     networkProfilLoad();
+    if(multicastAddress=="")multicastAddress="239.255.0.11";
+    qDebug()<<"multicastAddress: "<<multicastAddress;//networkProfilLoad(); çalışmalı öncesinde
+
     QString uport="7879";
     if(NetProfilList.count()>0)
         uport=NetProfilList.first().networkTcpPort;
@@ -227,27 +230,14 @@ void NewtworkProfil::networkProfilLoad()
                     np.subnet = interfaceList[i].subnet;
                     np.networkBroadCastAddress = interfaceList[i].broadcast;
                 }
-               /* if (ayniSubnet(np.serverAddress,
-                               NetProfilList[i].serverAddress,
-                               np.subnet))
-                {
-                    np.ipAddress=interfaceList[i].ip;
-                    np.macAddress=interfaceList[i].mac;
-                    np.subnet=interfaceList[i].subnet;
-                    np.networkBroadCastAddress=veri["networkBroadCastAddress"].toString();
-                }*/
-               /* if(veri["ipAddress"].toString().section(".",0,1)==interfaceList[i].ip.section(".",0,1))
-                {
-                    np.ipAddress=interfaceList[i].ip;
-                    np.macAddress=interfaceList[i].mac;
-                    np.subnet=interfaceList[i].subnet;
-                    np.networkBroadCastAddress=veri["networkBroadCastAddress"].toString();
-                }*/
             }
-
+            np.multicastAddress=veri["multicastAddress"].toString();
             np.ftpPort=veri["ftpPort"].toString();
             np.rootPath=veri["rootPath"].toString();
             np.language=veri["language"].toString();
+            np.multicastAddress=veri["multicastAddress"].toString();
+            multicastAddress=veri["multicastAddress"].toString();
+
             np.lockScreenState=veri["lockScreenState"].toBool();
             np.webblockState=veri["webblockState"].toBool();
             NetProfilList.append(np);
@@ -273,6 +263,8 @@ void NewtworkProfil::networkProfilLoad()
             veri["ftpPort"]="12345";
             veri["rootPath"]="/tmp/";
             veri["language"]="tr_TR";
+            veri["multicastAddress"]="239.255.0.11";
+            multicastAddress="239.255.0.11";
             veri["lockScreenState"]=false;
             veri["webblockState"]=false;
             if(interfaceList[i].ip.contains("172.17"))veri["selectedNetworkProfil"] =false;
@@ -296,6 +288,8 @@ void NewtworkProfil::networkProfilLoad()
             veri["ftpPort"]="12345";
             veri["rootPath"]="/tmp/";
             veri["language"]="tr_TR";
+            veri["multicastAddress"]="239.255.0.11";
+            multicastAddress="239.255.0.11";
             veri["lockScreenState"]=false;
             veri["webblockState"]=false;
             db->Ekle(veri);
