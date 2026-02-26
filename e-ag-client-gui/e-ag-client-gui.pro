@@ -27,7 +27,8 @@ CONFIG += qdbus
 SOURCES += \
         hostnamedialog.cpp \
         main.cpp \
-        mainwindow.cpp
+        mainwindow.cpp \
+        multicastaddressdialog.cpp
 
 HEADERS += \
     Database.h \
@@ -36,6 +37,7 @@ HEADERS += \
     ayar.h \
     giris.h \
     hakkinda.h \
+    multicastaddressdialog.h \
     networkWidget.h \
     webblockWidget.h
 

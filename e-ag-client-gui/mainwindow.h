@@ -32,6 +32,7 @@
 #include<QUdpSocket>
 #include<Database.h>
 #include<hostnamedialog.h>
+#include<multicastaddressdialog.h>
 class IpMac
 {
 public:
@@ -56,7 +57,6 @@ public:
     QString ftpPort;
     QString rootPath;
     QString language;
-    QString multicastAddress;
 
     bool lockScreenState;
     bool webblockState;

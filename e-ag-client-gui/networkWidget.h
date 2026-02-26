@@ -6,7 +6,7 @@ void MainWindow::networkProfil()
     // qDebug()<<"ayar click";
     QDialog * d = new QDialog();
     d->setWindowTitle("Ağ Profil Listesi");
-    d->setFixedSize(QSize(boy*220,boy*50));
+    d->setFixedSize(QSize(boy*200,boy*50));
     d->setStyleSheet("font-size:"+QString::number(font.toInt()-2)+"px;");
     auto appIcon = QIcon(":/icons/e-ag.svg");
     d->setWindowIcon(appIcon);
@@ -17,8 +17,8 @@ void MainWindow::networkProfil()
     /***********************************************************************/
     QTableWidget *twlh=new QTableWidget;
 
-    twlh->setFixedSize(QSize(boy*215,boy*35));
-    twlh->setColumnCount(16);
+    twlh->setFixedSize(QSize(boy*195,boy*35));
+    twlh->setColumnCount(15);
     //twlh->setRowCount(0);
     twlh->setHorizontalHeaderItem(0, new QTableWidgetItem("Seçili Ağ"));
     twlh->setHorizontalHeaderItem(1, new QTableWidgetItem("Ağ No"));
@@ -35,9 +35,8 @@ void MainWindow::networkProfil()
 
     twlh->setHorizontalHeaderItem(11, new QTableWidgetItem("Ekran Kilidi"));
     twlh->setHorizontalHeaderItem(12, new QTableWidgetItem("Web Filtresi"));
-    twlh->setHorizontalHeaderItem(13, new QTableWidgetItem("Multicast Adresi"));
+    twlh->setHorizontalHeaderItem(13, new QTableWidgetItem(""));
     twlh->setHorizontalHeaderItem(14, new QTableWidgetItem(""));
-    twlh->setHorizontalHeaderItem(15, new QTableWidgetItem(""));
 
 
     twlh->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -57,9 +56,8 @@ void MainWindow::networkProfil()
     twlh->setColumnWidth(10,boy*10);
     twlh->setColumnWidth(11,boy*20);
     twlh->setColumnWidth(12,boy*20);
-    twlh->setColumnWidth(13,boy*20);
+    twlh->setColumnWidth(13,boy*10);
     twlh->setColumnWidth(14,boy*10);
-    twlh->setColumnWidth(15,boy*10);
 
 
     DatabaseHelper *db=new DatabaseHelper(localDir+"e-ag.json");
@@ -83,7 +81,6 @@ void MainWindow::networkProfil()
         QLineEdit * ftpPort = new QLineEdit();
         QLineEdit * rootPath= new QLineEdit();
         QLineEdit * language = new QLineEdit();
-        QLineEdit * multicastAddress = new QLineEdit();
 
         QCheckBox * lockScreenState = new QCheckBox();
         QCheckBox * webblockState = new QCheckBox();
@@ -118,7 +115,6 @@ void MainWindow::networkProfil()
 
                         QCheckBox * lockScreenState1 = static_cast<QCheckBox*> (twlh->cellWidget(i,11));
                         QCheckBox * webblockState1 = static_cast<QCheckBox*> (twlh->cellWidget(i,12));
-                        QLineEdit * multicastAddress1 = static_cast<QLineEdit*> (twlh->cellWidget(i,13));
 
                         qDebug()<<"Ağ Profili Değiştirilecek."<<savetButton->toolTip();
                         QJsonObject veri;
@@ -135,7 +131,6 @@ void MainWindow::networkProfil()
                         veri["ftpPort"]=ftpPort1->text();
                         veri["rootPath"]=rootPath1->text();
                         veri["language"]=language1->text();
-                        veri["multicastAddress"]=multicastAddress->text();
                         //veri["webblockState"]=webblockState->text();
                         if (lockScreenState1->isChecked()) veri["lockScreenState"] =true;
                         else veri["lockScreenState"] =false;
@@ -179,7 +174,6 @@ void MainWindow::networkProfil()
         ftpPort->setText(veri.value("ftpPort").toString());
         rootPath->setText(veri.value("rootPath").toString());
         language->setText(veri.value("language").toString());
-        multicastAddress->setText(veri.value("multicastAddress").toString());
 
         savetButton->setToolTip(networkIndex->text());
         twlh->setCellWidget(sr,0,mCheck);
@@ -195,9 +189,8 @@ void MainWindow::networkProfil()
         twlh->setCellWidget(sr,10,language);
         twlh->setCellWidget(sr,11,lockScreenState);
         twlh->setCellWidget(sr,12,webblockState);
-        twlh->setCellWidget(sr,13,multicastAddress);
-        twlh->setCellWidget(sr,14,savetButton);
-        twlh->setCellWidget(sr,15,networkRemoveButton);
+        twlh->setCellWidget(sr,13,savetButton);
+        twlh->setCellWidget(sr,14,networkRemoveButton);
         if(veri.value("selectedNetworkProfil").toBool()) mCheck->setChecked(true);
         else mCheck->setChecked(false);
         if(veri.value("lockScreenState").toBool()) lockScreenState->setChecked(true);
@@ -245,7 +238,6 @@ void MainWindow::networkProfil()
             veri["ftpPort"]="12345";
             veri["rootPath"]="/tmp/";
             veri["language"]="tr_TR";
-            veri["multicastAddress"]="239.255.0.11";
 
             veri["lockScreenState"]=false;
             veri["webblockState"]=false;
@@ -291,7 +283,6 @@ void MainWindow::networkProfilLoad()
             np.ftpPort=veri["ftpPort"].toString();
             np.rootPath=veri["rootPath"].toString();
             np.language=veri["language"].toString();
-            np.multicastAddress=veri["multicastAddress"].toString();
 
             np.lockScreenState=veri["lockScreenState"].toBool();
             np.webblockState=veri["webblockState"].toBool();
@@ -316,7 +307,6 @@ void MainWindow::networkProfilLoad()
             veri["ftpPort"]="12345";
             veri["rootPath"]="/tmp/";
             veri["language"]="tr_TR";
-            veri["multicastAddress"]="239.255.0.11";
 
 
             veri["lockScreenState"]=false;

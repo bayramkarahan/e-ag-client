@@ -45,6 +45,7 @@
 #include <QtCore/QCoreApplication>
 #include<webblockWidget.h>
 #include<networkWidget.h>
+#include<multicastaddressdialog.h>
 #include<QScreen>
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)

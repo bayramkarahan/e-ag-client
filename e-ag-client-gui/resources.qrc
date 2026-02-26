@@ -10,5 +10,6 @@
         <file>icons/remove.svg</file>
         <file>icons/add.svg</file>
         <file>icons/hostname.svg</file>
+        <file>icons/multicast.svg</file>
     </qresource>
 </RCC>

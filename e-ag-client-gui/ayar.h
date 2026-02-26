@@ -93,12 +93,39 @@ QWidget *MainWindow::ayar()
         }
 
     });
+
+    QToolButton *multicastAddressChangeButton= new QToolButton;
+    multicastAddressChangeButton->setFixedSize(QSize(boy*30,boy*10));
+    multicastAddressChangeButton->setIconSize(QSize(boy*5,boy*5));
+    multicastAddressChangeButton->setStyleSheet("Text-align:center");
+    multicastAddressChangeButton->setIcon(QIcon(":/icons/multicast.svg"));
+    //multicastAddressChangeButton->setAutoRaise(true);
+    multicastAddressChangeButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+    multicastAddressChangeButton->setFont(f2);
+    multicastAddressChangeButton->setText("Yayın Adresi Değiştir");
+
+    connect(multicastAddressChangeButton, &QPushButton::clicked, [=]() {
+        MulticastAddressDialog *dlg=new MulticastAddressDialog(boy*50,boy*20);
+        if (dlg->exec() == QDialog::Accepted) {
+            qDebug() << "Multicast Yayın Adresi Değiştirildi.";
+
+           /* QFile file("/etc/hostname");
+            if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                QString current = QString::fromUtf8(file.readAll()).trimmed();
+                hostnamelabel->setText("Bilgisayar Adı: "+current);
+                file.close();
+            }*/
+        }
+
+    });
     auto layout = new QGridLayout(ayarPage);
     layout->setContentsMargins(0, 0, 0,0);    
     layout->addWidget(hostnamelabel, 0, 0, Qt::AlignHCenter);
     layout->addWidget(hostnameChangeButton, 1, 0, Qt::AlignHCenter);
-    layout->addWidget(networkProfilWidgetButton, 2, 0, Qt::AlignHCenter);
-    layout->addWidget(webblockWidgetButton, 3, 0, Qt::AlignHCenter);
+    layout->addWidget(multicastAddressChangeButton, 2, 0, Qt::AlignHCenter);
+
+    layout->addWidget(networkProfilWidgetButton, 3, 0, Qt::AlignHCenter);
+    layout->addWidget(webblockWidgetButton, 4, 0, Qt::AlignHCenter);
     layout->setRowStretch(4, 1); // Alta boşluk ekle
     layout->setRowStretch(0, 1); // Üste boşluk ekle
 

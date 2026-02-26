@@ -21,9 +21,20 @@ NewtworkProfil::NewtworkProfil()
                 }
             });
     networkProfilLoad();
-    if(multicastAddress=="")multicastAddress="239.255.0.11";
+    /**********************************************************************************/
+    DatabaseHelper *db=new DatabaseHelper(localDir+"e-ag-multicastaddress.json");
+    QJsonArray dizi=db->Oku();
+    if(dizi.count()>0)
+    {
+        QJsonValue item=dizi.first();
+        QJsonObject veri=item.toObject();
+        multicastAddress=veri["multicastAddress"].toString();
+    }else
+    {
+        multicastAddress="239.255.0.11";
+    }
     qDebug()<<"multicastAddress: "<<multicastAddress;//networkProfilLoad(); çalışmalı öncesinde
-
+    /*****************************************************************************/
     QString uport="7879";
     if(NetProfilList.count()>0)
         uport=NetProfilList.first().networkTcpPort;
@@ -32,7 +43,9 @@ NewtworkProfil::NewtworkProfil()
     ////udpServerGet->bind(uport.toInt()+uport.toInt(), QUdpSocket::ShareAddress);
     udpServerGet->bind(QHostAddress::AnyIPv4, 45454,
                     QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
-    QHostAddress group("239.255.0.11");
+    //QHostAddress group("239.255.0.11");
+    QHostAddress group(multicastAddress);
+
     //udpServerGet->joinMulticastGroup(QHostAddress("239.255.0.11"));
     /*********************************************/
     const QList<QNetworkInterface> interfaces = QNetworkInterface::allInterfaces();
@@ -231,12 +244,9 @@ void NewtworkProfil::networkProfilLoad()
                     np.networkBroadCastAddress = interfaceList[i].broadcast;
                 }
             }
-            np.multicastAddress=veri["multicastAddress"].toString();
-            np.ftpPort=veri["ftpPort"].toString();
+             np.ftpPort=veri["ftpPort"].toString();
             np.rootPath=veri["rootPath"].toString();
             np.language=veri["language"].toString();
-            np.multicastAddress=veri["multicastAddress"].toString();
-            multicastAddress=veri["multicastAddress"].toString();
 
             np.lockScreenState=veri["lockScreenState"].toBool();
             np.webblockState=veri["webblockState"].toBool();
