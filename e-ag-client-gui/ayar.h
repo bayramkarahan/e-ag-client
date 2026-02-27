@@ -28,7 +28,7 @@
 QWidget *MainWindow::ayar()
 {
     QFont f3( "Arial", font.toInt()+5, QFont::Bold);
-    hostnamelabel->setFixedSize(QSize(this->width(),boy*4));
+    hostnamelabel->setFixedSize(QSize(this->width(),boy*5));
     hostnamelabel->setFont(f3);
     hostnamelabel->setAlignment(Qt::AlignCenter);
     // Mevcut hostname'i oku
