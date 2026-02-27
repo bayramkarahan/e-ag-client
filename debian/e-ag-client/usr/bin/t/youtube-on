@@ -1,0 +1,37 @@
+#!/bin/bash
+# Döngüyü durdur ve engeli kaldır
+LOCK_FILE="/tmp/yt-block.lock"
+
+if [ -f "$LOCK_FILE" ]; then
+    rm "$LOCK_FILE"
+    echo "🛑 Engelleme döngüsü durduruldu."
+else
+    echo "ℹ️ Döngü zaten çalışmıyor."
+fi
+
+# Engeli kaldır
+#/usr/bin/yt-on
+# 🔓 YouTube engelini kaldırma script'i
+# Çalıştır: sudo ./yt-unblock.sh
+
+set -e
+
+echo "🧹 Eski ipset setleri temizleniyor..."
+ipset destroy ytblock 2>/dev/null || true
+ipset destroy ytblock6 2>/dev/null || true
+
+echo "🧹 iptables zincirleri temizleniyor..."
+# IPv4
+sudo iptables -D OUTPUT -j YT_BLOCK 2>/dev/null || true
+sudo iptables -D FORWARD -j YT_BLOCK 2>/dev/null || true
+sudo iptables -F YT_BLOCK 2>/dev/null || true
+sudo iptables -X YT_BLOCK 2>/dev/null || true
+
+# IPv6
+sudo ip6tables -D OUTPUT -j YT_BLOCK6 2>/dev/null || true
+sudo ip6tables -D FORWARD -j YT_BLOCK6 2>/dev/null || true
+sudo ip6tables -F YT_BLOCK6 2>/dev/null || true
+sudo ip6tables -X YT_BLOCK6 2>/dev/null || true
+
+echo "✅ YouTube engeli kaldırıldı!"
+

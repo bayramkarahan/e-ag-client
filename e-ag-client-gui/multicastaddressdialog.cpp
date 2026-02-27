@@ -72,6 +72,18 @@ void MulticastAddressDialog::saveMulticastAddress()
     QMessageBox::information(this, "Başarılı",
                              "Yayın adresi başarıyla değiştirildi.");
 
+    //system("systemctl restart e-ag-client-console.service");
+    //system("systemctl restart e-ag-client-networkprofil.service");
+    int ret = QProcess::execute("bash", QStringList() << "-c" << "systemctl restart e-ag-client-networkprofil.service");
+    if (ret != 0) {
+        QMessageBox::critical(this, "Hata", "e-ag-client-networkprofil yeniden başlatılamadı.");
+        return;
+    }
+    int res = QProcess::execute("bash", QStringList() << "-c" << "systemctl restart e-ag-client-console.service");
+    if (res != 0) {
+        QMessageBox::critical(this, "Hata", " e-ag-client-console yeniden başlatılamadı.");
+        return;
+    }
     accept();
 }
 

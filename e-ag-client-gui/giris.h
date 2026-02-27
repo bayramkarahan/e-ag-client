@@ -24,8 +24,8 @@ QWidget *MainWindow::giris()
     QWidget *girisPage=new QWidget();
     /*******************************************************/
     auto  screenbtn = new QPushButton(girisPage);
-    screenbtn->setFixedSize(QSize(boy*60,boy*60));
-    screenbtn->setIconSize(QSize(boy*60,boy*60));
+    screenbtn->setFixedSize(QSize(boy*50,boy*50));
+    screenbtn->setIconSize(QSize(boy*50,boy*50));
     screenbtn->setAutoFillBackground(true);
     screenbtn->setIcon(QIcon(":/icons/e-ag.svg"));
     screenbtn->setFlat(true);
@@ -42,7 +42,7 @@ QWidget *MainWindow::giris()
     //layout->setColumnMinimumWidth(0, 37);
     layout->addWidget(screenbtn, 5,0,1,2,Qt::AlignHCenter);
 
-    layout->addWidget(sat1,10,0,1,2);
+    layout->addWidget(sat1,10,0,1,2, Qt::AlignHCenter);
    // layout->addWidget(sat2,15,0,1,2);
     //layout->addWidget(sat3,20,0,1,2);
 

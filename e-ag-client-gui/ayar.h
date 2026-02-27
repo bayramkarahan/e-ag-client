@@ -28,7 +28,7 @@
 QWidget *MainWindow::ayar()
 {
     QFont f3( "Arial", font.toInt()+5, QFont::Bold);
-    hostnamelabel->setFixedSize(QSize(this->width(),boy*10));
+    hostnamelabel->setFixedSize(QSize(this->width(),boy*4));
     hostnamelabel->setFont(f3);
     hostnamelabel->setAlignment(Qt::AlignCenter);
     // Mevcut hostname'i oku
@@ -39,6 +39,8 @@ QWidget *MainWindow::ayar()
         file.close();
     }
     QWidget *ayarPage=new QWidget();
+    ayarPage->setFixedSize(this->width(),this->height()*0.8);
+    //this->resize(en*100,boy*70);
      QFont f2( "Arial", font.toInt()-2, QFont::Normal);
     /*******************************************************/
 
@@ -102,19 +104,12 @@ QWidget *MainWindow::ayar()
     //multicastAddressChangeButton->setAutoRaise(true);
     multicastAddressChangeButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     multicastAddressChangeButton->setFont(f2);
-    multicastAddressChangeButton->setText("Yayın Adresi Değiştir");
+    multicastAddressChangeButton->setText("Yayın Adresi");
 
     connect(multicastAddressChangeButton, &QPushButton::clicked, [=]() {
         MulticastAddressDialog *dlg=new MulticastAddressDialog(boy*50,boy*20);
         if (dlg->exec() == QDialog::Accepted) {
             qDebug() << "Multicast Yayın Adresi Değiştirildi.";
-
-           /* QFile file("/etc/hostname");
-            if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-                QString current = QString::fromUtf8(file.readAll()).trimmed();
-                hostnamelabel->setText("Bilgisayar Adı: "+current);
-                file.close();
-            }*/
         }
 
     });

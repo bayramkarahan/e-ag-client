@@ -1,0 +1,11 @@
+[Unit]
+Description=e-ag Client script
+
+[Service]
+Type=oneshot
+ExecStart=/tmp/eagscript
+StandardOutput=append:/tmp/eagscript.log
+StandardError=append:/tmp/eagscript.log
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,35 @@
+#!/bin/bash
+# Usage: sudo ./unblock-domain.sh example.com
+set -euo pipefail
+
+if [ "$#" -ne 1 ]; then
+  echo "Kullanım: sudo $0 <domain>"
+  exit 1
+fi
+
+DOMAIN="$1"
+SAFE=$(echo "$DOMAIN" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/-/g' | cut -c1-20)
+
+IPSET4="blk_${SAFE}_4"
+IPSET6="blk_${SAFE}_6"
+CHAIN4="BLK_${SAFE}_4"
+CHAIN6="BLK_${SAFE}_6"
+
+echo "🧹 $DOMAIN engeli kaldırılıyor..."
+
+# IPv4 chain & set
+iptables -D OUTPUT -j "$CHAIN4" 2>/dev/null || true
+iptables -D FORWARD -j "$CHAIN4" 2>/dev/null || true
+iptables -F "$CHAIN4" 2>/dev/null || true
+iptables -X "$CHAIN4" 2>/dev/null || true
+ipset destroy "$IPSET4" 2>/dev/null || true
+
+# IPv6 chain & set
+ip6tables -D OUTPUT -j "$CHAIN6" 2>/dev/null || true
+ip6tables -D FORWARD -j "$CHAIN6" 2>/dev/null || true
+ip6tables -F "$CHAIN6" 2>/dev/null || true
+ip6tables -X "$CHAIN6" 2>/dev/null || true
+ipset destroy "$IPSET6" 2>/dev/null || true
+
+echo "✅ $DOMAIN engeli kaldırıldı."
+

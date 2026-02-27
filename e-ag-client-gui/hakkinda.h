@@ -28,6 +28,7 @@ QWidget *MainWindow::hakkinda()
 {
 
     QWidget *hakkindaPage=new QWidget();
+    hakkindaPage->setFixedSize(this->width(),this->height()*0.8);
     /*******************************************************/
  QString yil=QString::number( QDateTime::currentDateTime().date().year());
    auto *hak=new QLabel(hakkindaPage);
@@ -62,7 +63,7 @@ QWidget *MainWindow::hakkinda()
 
     auto layout = new QGridLayout(hakkindaPage);
     layout->setContentsMargins(0, 0, 0,0);
-    layout->addWidget( hak,20,0,1,1);
+    layout->addWidget( hak,20,0,1,1, Qt::AlignHCenter);
 
    // layout->setColumnStretch(6, 255);
 

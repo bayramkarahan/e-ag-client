@@ -1,0 +1,29 @@
+#!/bin/bash
+# input-on.sh — Gerçek klavye ve fareleri yeniden etkinleştirir (X11 için)
+
+USER=$(who | grep "(:0" | awk '{print $1}' | head -n 1)
+DISPLAY=":0"
+XAUTHORITY="/home/$USER/.Xauthority"
+
+if [ -z "$USER" ] || [ ! -f "$XAUTHORITY" ]; then
+    echo "❌ X oturumu bulunamadı veya XAUTHORITY dosyası yok."
+    exit 1
+fi
+
+echo "🧩 Kullanıcı: $USER"
+echo "📁 XAUTHORITY: $XAUTHORITY"
+echo "🔓 Fiziksel klavye ve fare yeniden etkinleştiriliyor..."
+
+sudo -u "$USER" DISPLAY=$DISPLAY XAUTHORITY=$XAUTHORITY bash -c '
+# Etkinleştirilecek cihaz isimleri
+DEVICES=("AT Translated Set 2 keyboard" "ImExPS/2 Generic Explorer Mouse")
+
+for dev in "${DEVICES[@]}"; do
+    id=$(xinput list | grep "$dev" | sed -E "s/.*id=([0-9]+).*/\1/")
+    if [ -n "$id" ]; then
+        xinput enable "$id" && echo "✅ $dev (ID: $id) etkinleştirildi"
+    else
+        echo "⚠️ $dev bulunamadı (muhtemelen farklı adla görünüyor)"
+    fi
+done
+'

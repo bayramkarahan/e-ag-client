@@ -1,0 +1,63 @@
+#!/bin/bash
+# input-control — X11 altında klavye/fare kontrol aracı
+# Kullanım:
+#   ./input-control off mouse
+#   ./input-control on keyboard
+#   ./input-control off all
+
+ACTION=$1      # "on" veya "off"
+TARGET=$2      # "mouse" | "keyboard" | "all"
+
+USER=$(who | awk '/:0/{print $1; exit}')
+XAUTH="/home/$USER/.Xauthority"
+export DISPLAY=:0
+export XAUTHORITY=$XAUTH
+
+if [[ -z "$ACTION" || -z "$TARGET" ]]; then
+    echo "Kullanım: $0 [on|off] [mouse|keyboard|all]"
+    exit 1
+fi
+
+echo "🧩 Kullanıcı: $USER"
+echo "📁 XAUTHORITY: $XAUTH"
+
+case "$ACTION" in
+  off)
+    echo "🔒 $TARGET devre dışı bırakılıyor..."
+    ;;
+  on)
+    echo "🔓 $TARGET yeniden etkinleştiriliyor..."
+    ;;
+  *)
+    echo "❌ Hatalı eylem. 'on' veya 'off' yazmalısınız."
+    exit 1
+    ;;
+esac
+
+# İlgili aygıtları bul
+case "$TARGET" in
+  mouse)
+    DEVICES=$(xinput list | grep -E 'pointer' | grep -v 'XTEST' | sed -E 's/.*id=([0-9]+).*/\1/')
+    ;;
+  keyboard)
+    DEVICES=$(xinput list | grep -E 'keyboard' | grep -v 'XTEST' | sed -E 's/.*id=([0-9]+).*/\1/')
+    ;;
+  all)
+    DEVICES=$(xinput list | grep -E 'pointer|keyboard' | grep -v 'XTEST' | sed -E 's/.*id=([0-9]+).*/\1/')
+    ;;
+  *)
+    echo "❌ Geçersiz hedef. [mouse|keyboard|all] olmalı."
+    exit 1
+    ;;
+esac
+
+# İşlem uygula
+for id in $DEVICES; do
+    NAME=$(xinput list --name-only "$id")
+    if [[ "$ACTION" == "off" ]]; then
+        xinput disable "$id" && echo "⛔ $NAME (ID: $id) devre dışı bırakıldı"
+    else
+        xinput enable "$id" && echo "✅ $NAME (ID: $id) etkinleştirildi"
+    fi
+done
+
