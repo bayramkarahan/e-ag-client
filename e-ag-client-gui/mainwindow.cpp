@@ -73,7 +73,7 @@ MainWindow::MainWindow(QWidget *parent) :
     int e=en;
     int b=boy;
     this->setStyleSheet("background-color: #dfdfdf;");
-    this->resize(en*70,boy*60);
+    this->resize(en*80,boy*70);
        // App icon
       auto appIcon = QIcon(":/icons/e-ag.svg");
       this->setWindowIcon(appIcon);
