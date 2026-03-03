@@ -155,6 +155,9 @@ void MainWindow::networkProfil()
             QJsonArray dizi=db->Ara("networkIndex",networkRemoveButton->toolTip());
             qDebug()<<"Ağ Profili Silinecek."<<networkRemoveButton->toolTip();
             db->Sil("networkIndex",networkIndex->text());
+            qDebug()<<"eagconf bilgileri farklı güncelleniyor.";
+            system("systemctl restart e-ag-client-console.service");
+            system("systemctl restart e-ag-client-networkprofil.service");
             d->close();
             networkProfil();
             networkProfilLoad();
@@ -242,6 +245,9 @@ void MainWindow::networkProfil()
             veri["lockScreenState"]=false;
             veri["webblockState"]=false;
             db->Ekle(veri);
+            qDebug()<<"eagconf bilgileri farklı güncelleniyor.";
+            system("systemctl restart e-ag-client-console.service");
+            system("systemctl restart e-ag-client-networkprofil.service");
             }
         }
         d->close();
@@ -288,7 +294,9 @@ void MainWindow::networkProfilLoad()
             np.webblockState=veri["webblockState"].toBool();
             NetProfilList.append(np);
         }
-    }else{
+    }
+    /*
+    else{
         qDebug()<<"Yeni Network Ekleniyor.";
         hostAddressMacButtonSlot();
         for(int i=0;i<interfaceList.count();i++)
@@ -316,10 +324,8 @@ void MainWindow::networkProfilLoad()
         }
         networkProfilLoad();
     }
+*/
 
-    qDebug()<<"eagconf bilgileri farklı güncelleniyor.";
-    system("systemctl restart e-ag-client-console.service");
-    system("systemctl restart e-ag-client-networkprofil.service");
 }
 
 #endif // NETWORKWIDGET_H

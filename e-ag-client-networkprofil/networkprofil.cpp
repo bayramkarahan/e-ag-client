@@ -21,6 +21,16 @@ NewtworkProfil::NewtworkProfil()
                 }
             });
     networkProfilLoad();
+
+    networkConfigManager = new QNetworkConfigurationManager(this);
+
+    connect(networkConfigManager, &QNetworkConfigurationManager::configurationChanged,
+            this, [this](const QNetworkConfiguration &config){
+                Q_UNUSED(config);
+                qDebug() << "Network configuration changed!";
+                networkProfilLoad();
+            });
+
     /**********************************************************************************/
     DatabaseHelper *db=new DatabaseHelper(localDir+"e-ag-multicastaddress.json");
     QJsonArray dizi=db->Oku();
@@ -231,7 +241,6 @@ void NewtworkProfil::networkProfilLoad()
             np.networkName=veri["networkName"].toString();
             np.networkTcpPort=veri["networkTcpPort"].toString();
             np.serverAddress=veri["serverAddress"].toString();
-            hostAddressMacButtonSlot();
             for(int i=0;i<interfaceList.count();i++)
             {
                 if (ayniSubnet(veri["ipAddress"].toString(),
@@ -252,13 +261,19 @@ void NewtworkProfil::networkProfilLoad()
             np.webblockState=veri["webblockState"].toBool();
             NetProfilList.append(np);
         }
-    }else{
-        qDebug()<<"Yeni Network Ekleniyor.";
+    }
 
-        hostAddressMacButtonSlot();
-        for(int i=0;i<interfaceList.count();i++)
+
+    // yeniler kontrol ediliyor
+    bool appendStatus=false;
+    for(int i=0;i<interfaceList.count();i++)
+    {
+        QJsonArray dizi=db->Ara("serverAddress",interfaceList[i].ip);
+        if(dizi.empty())
         {
             //qDebug()<<"broadcast address:"<<i<<interfaceList[i].broadcast;
+            qDebug()<<"Yeni Network Ekleniyor.";
+            appendStatus=true;
             QJsonObject veri;
             veri["networkIndex"] =QString::number(db->getIndex("networkIndex"));
             veri["selectedNetworkProfil"] =true;
@@ -281,32 +296,33 @@ void NewtworkProfil::networkProfilLoad()
             db->Sil("networkBroadCastAddress",interfaceList[i].broadcast);
             db->Ekle(veri);
         }
-        //internet yoksa olur
-        if(interfaceList.count()==0)
-        {
-            //qDebug()<<"broadcast address:"<<i<<interfaceList[i].broadcast;
-            QJsonObject veri;
-            veri["networkIndex"] =QString::number(db->getIndex("networkIndex"));
-            veri["selectedNetworkProfil"] =true;
-            veri["networkName"] = "networknullip";
-            veri["networkTcpPort"] = "7879";
-            veri["serverAddress"]="11111";
-            veri["ipAddress"]="2222";
-            veri["macAddress"]="3333";
-            veri["networkBroadCastAddress"]="";
-            veri["subnet"]="";
-            veri["ftpPort"]="12345";
-            veri["rootPath"]="/tmp/";
-            veri["language"]="tr_TR";
-            veri["multicastAddress"]="239.255.0.11";
-            multicastAddress="239.255.0.11";
-            veri["lockScreenState"]=false;
-            veri["webblockState"]=false;
-            db->Ekle(veri);
-        }
-        networkProfilLoad();
-
     }
+    if(appendStatus){  networkProfilLoad();}
+    //internet yoksa olur
+    if(interfaceList.count()==0)
+    {
+        //qDebug()<<"broadcast address:"<<i<<interfaceList[i].broadcast;
+        QJsonObject veri;
+        veri["networkIndex"] =QString::number(db->getIndex("networkIndex"));
+        veri["selectedNetworkProfil"] =true;
+        veri["networkName"] = "networknullip";
+        veri["networkTcpPort"] = "7879";
+        veri["serverAddress"]="11111";
+        veri["ipAddress"]="2222";
+        veri["macAddress"]="3333";
+        veri["networkBroadCastAddress"]="";
+        veri["subnet"]="";
+        veri["ftpPort"]="12345";
+        veri["rootPath"]="/tmp/";
+        veri["language"]="tr_TR";
+        veri["multicastAddress"]="239.255.0.11";
+        multicastAddress="239.255.0.11";
+        veri["lockScreenState"]=false;
+        veri["webblockState"]=false;
+        db->Ekle(veri);
+        networkProfilLoad();
+    }
+
     //qDebug()<<"eagconf bilgileri farklı güncelleniyor.";
     ///system("systemctl restart e-ag-client-console.service");
 }
