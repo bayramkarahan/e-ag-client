@@ -12,6 +12,7 @@
 #include<QDir>
 #include<QFileSystemWatcher>
 #include <QNetworkConfigurationManager>
+#include <QThread>
 class IpMac
 {
 public:
@@ -72,8 +73,10 @@ public:
     ~NewtworkProfil();
 
 signals:
-  public slots:
+
+public slots:
     void networkProfilLoad();
+    void multicastJoin();
     bool stringToBool(const QString& str) {
         return str.toLower() == "true"; // Büyük/küçük harf duyarsız karşılaştırma
     }

@@ -17,21 +17,41 @@ NewtworkProfil::NewtworkProfil()
                 if(!networkProfilSaveStatus)
                 {
                 qDebug()<<"Ayarlar güncellendi(Farklı Uygulamalardan)...";
+                QThread::sleep(5);
+                multicastJoin();
                 networkProfilLoad();  // burada tekrar addPath() çağırılacak
+                system("systemctl restart e-ag-client-console.service");
                 }
             });
-    networkProfilLoad();
 
     networkConfigManager = new QNetworkConfigurationManager(this);
 
     connect(networkConfigManager, &QNetworkConfigurationManager::configurationChanged,
             this, [this](const QNetworkConfiguration &config){
                 Q_UNUSED(config);
+
                 qDebug() << "Network configuration changed!";
+                QThread::sleep(5);
+                qDebug() << "Network configuration changed! Ayarlar yükleniyor...";
+                multicastJoin();
                 networkProfilLoad();
+                system("systemctl restart e-ag-client-console.service");
             });
+    networkProfilLoad();
+    multicastJoin();
 
     /**********************************************************************************/
+   /* QString uport="7879";
+    if(NetProfilList.count()>0)
+        uport=NetProfilList.first().networkTcpPort;
+    std::reverse(uport.begin(), uport.end());
+   */
+/*********************kullanılmayan profilleri sil******************************/
+
+}
+void NewtworkProfil::multicastJoin()
+{
+    qDebug() << "multicastJoin";
     DatabaseHelper *db=new DatabaseHelper(localDir+"e-ag-multicastaddress.json");
     QJsonArray dizi=db->Oku();
     if(dizi.count()>0)
@@ -44,20 +64,14 @@ NewtworkProfil::NewtworkProfil()
         multicastAddress="239.255.0.11";
     }
     qDebug()<<"multicastAddress: "<<multicastAddress;//networkProfilLoad(); çalışmalı öncesinde
-    /*****************************************************************************/
-    QString uport="7879";
-    if(NetProfilList.count()>0)
-        uport=NetProfilList.first().networkTcpPort;
-    std::reverse(uport.begin(), uport.end());
+/*************************************************************************************/
+    //QHostAddress group("239.255.0.11");
+    QHostAddress group(multicastAddress);
     udpServerGet = new QUdpSocket();
     ////udpServerGet->bind(uport.toInt()+uport.toInt(), QUdpSocket::ShareAddress);
     udpServerGet->bind(QHostAddress::AnyIPv4, 45454,
-                    QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
-    //QHostAddress group("239.255.0.11");
-    QHostAddress group(multicastAddress);
-
-    //udpServerGet->joinMulticastGroup(QHostAddress("239.255.0.11"));
-    /*********************************************/
+                       QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
+    QObject::connect(udpServerGet,&QUdpSocket::readyRead,[&](){udpServerGetSlot(); });
     const QList<QNetworkInterface> interfaces = QNetworkInterface::allInterfaces();
 
     for (const QNetworkInterface &iface : interfaces)
@@ -68,16 +82,14 @@ NewtworkProfil::NewtworkProfil()
             !iface.humanReadableName().contains("lo"))
         {
             bool ok = udpServerGet->joinMulticastGroup(group, iface);
-            qDebug() << "Join:" << iface.name() << ok;
+            qDebug() << "Multicast Join:" << iface.name() << ok;
         }
     }
-    /**********************************************/
-    QObject::connect(udpServerGet,&QUdpSocket::readyRead,[&](){udpServerGetSlot(); });
 
-/*********************kullanılmayan profilleri sil******************************/
+    /***********************network multicast dinleniyor************************************/
+
 
 }
-
 
 NewtworkProfil::~NewtworkProfil()
 {
@@ -269,7 +281,7 @@ void NewtworkProfil::networkProfilLoad()
     for(int i=0;i<interfaceList.count();i++)
     {
         QJsonArray dizi=db->Ara("ipAddress",interfaceList[i].ip);
-        if(dizi.empty())
+        if(dizi.isEmpty())
         {
             //qDebug()<<"broadcast address:"<<i<<interfaceList[i].broadcast;
             qDebug()<<"Yeni Network Ekleniyor>>.";
@@ -297,10 +309,15 @@ void NewtworkProfil::networkProfilLoad()
             db->Ekle(veri);
         }
     }
-    if(appendStatus){  networkProfilLoad();}
+    //if(appendStatus){  networkProfilLoad();}
     //internet yoksa olur
+
     if(interfaceList.count()==0)
     {
+        QJsonArray dizi=db->Ara("ipAddress","2222");
+        if(dizi.isEmpty())
+        {
+        qDebug()<<"Boş Network Ekleniyor>>.";
         //qDebug()<<"broadcast address:"<<i<<interfaceList[i].broadcast;
         QJsonObject veri;
         veri["networkIndex"] =QString::number(db->getIndex("networkIndex"));
@@ -320,7 +337,9 @@ void NewtworkProfil::networkProfilLoad()
         veri["lockScreenState"]=false;
         veri["webblockState"]=false;
         db->Ekle(veri);
-        networkProfilLoad();
+        //networkProfilLoad();
+        }
+
     }
 
     //qDebug()<<"eagconf bilgileri farklı güncelleniyor.";
@@ -328,6 +347,7 @@ void NewtworkProfil::networkProfilLoad()
 }
 void NewtworkProfil::hostAddressMacButtonSlot()
 {
+    qDebug() << "hostAddressMacButtonSlot";
     QHostAddress localhost = QHostAddress(QHostAddress::LocalHost);
     interfaceList.clear();
     foreach (const QNetworkInterface& networkInterface, QNetworkInterface::allInterfaces()) {
