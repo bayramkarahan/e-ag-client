@@ -140,6 +140,9 @@ void MainWindow::networkProfil()
                         //db->Sil("networkIndex",networkIndex1->text());
                         //db->Ekle(veri);
                         db->Guncelle("networkIndex", networkIndex1->text(), veri);
+                        qDebug()<<"eagconf bilgileri farklı güncelleniyor.";
+                        system("systemctl restart e-ag-client-console.service");
+                        system("systemctl restart e-ag-client-networkprofil.service");
                     }
                 }
             }

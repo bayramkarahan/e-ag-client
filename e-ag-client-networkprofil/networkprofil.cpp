@@ -268,11 +268,11 @@ void NewtworkProfil::networkProfilLoad()
     bool appendStatus=false;
     for(int i=0;i<interfaceList.count();i++)
     {
-        QJsonArray dizi=db->Ara("serverAddress",interfaceList[i].ip);
+        QJsonArray dizi=db->Ara("ipAddress",interfaceList[i].ip);
         if(dizi.empty())
         {
             //qDebug()<<"broadcast address:"<<i<<interfaceList[i].broadcast;
-            qDebug()<<"Yeni Network Ekleniyor.";
+            qDebug()<<"Yeni Network Ekleniyor>>.";
             appendStatus=true;
             QJsonObject veri;
             veri["networkIndex"] =QString::number(db->getIndex("networkIndex"));
