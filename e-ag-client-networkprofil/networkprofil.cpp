@@ -12,15 +12,24 @@ NewtworkProfil::NewtworkProfil()
     localDir="/usr/share/e-ag/";
     localDir1="/tmp/";
    networkProfilWather.addPath(localDir+"e-ag.json");
+
+    udpServerGet = new QUdpSocket(this);
+    ////udpServerGet->bind(uport.toInt()+uport.toInt(), QUdpSocket::ShareAddress);
+    udpServerGet->bind(QHostAddress::AnyIPv4, 45454,
+                       QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
+     connect(udpServerGet, &QUdpSocket::readyRead,this, &NewtworkProfil::udpServerGetSlot);
+
     connect(&networkProfilWather, &QFileSystemWatcher::fileChanged, this,
             [this](){
                 if(!networkProfilSaveStatus)
                 {
                 qDebug()<<"Ayarlar güncellendi(Farklı Uygulamalardan)...";
-                QThread::sleep(5);
-                multicastJoin();
-                networkProfilLoad();  // burada tekrar addPath() çağırılacak
-                system("systemctl restart e-ag-client-console.service");
+                    QTimer::singleShot(5000, this, [this](){
+                    multicastJoin();
+                    networkProfilLoad();  // burada tekrar addPath() çağırılacak
+                    system("systemctl restart e-ag-client-console.service");
+                    });
+
                 }
             });
 
@@ -31,47 +40,32 @@ NewtworkProfil::NewtworkProfil()
                 Q_UNUSED(config);
 
                 qDebug() << "Network configuration changed!";
-                QThread::sleep(5);
-                qDebug() << "Network configuration changed! Ayarlar yükleniyor...";
-                multicastJoin();
-                networkProfilLoad();
-                system("systemctl restart e-ag-client-console.service");
+                QTimer::singleShot(5000, this, [this](){
+                    qDebug() << "Network configuration changed! Ayarlar yükleniyor...";
+                    multicastJoin();
+                    networkProfilLoad();
+                    system("systemctl restart e-ag-client-console.service");
+                });
+
             });
     networkProfilLoad();
     multicastJoin();
-
-    /**********************************************************************************/
-   /* QString uport="7879";
-    if(NetProfilList.count()>0)
-        uport=NetProfilList.first().networkTcpPort;
-    std::reverse(uport.begin(), uport.end());
-   */
-/*********************kullanılmayan profilleri sil******************************/
-
 }
+
 void NewtworkProfil::multicastJoin()
 {
     qDebug() << "multicastJoin";
-    DatabaseHelper *db=new DatabaseHelper(localDir+"e-ag-multicastaddress.json");
-    QJsonArray dizi=db->Oku();
+
+    DatabaseHelper db(localDir+"e-ag-multicastaddress.json");
+    QJsonArray dizi = db.Oku();
+
     if(dizi.count()>0)
-    {
-        QJsonValue item=dizi.first();
-        QJsonObject veri=item.toObject();
-        multicastAddress=veri["multicastAddress"].toString();
-    }else
-    {
-        multicastAddress="239.255.0.11";
-    }
-    qDebug()<<"multicastAddress: "<<multicastAddress;//networkProfilLoad(); çalışmalı öncesinde
-/*************************************************************************************/
-    //QHostAddress group("239.255.0.11");
-    QHostAddress group(multicastAddress);
-    udpServerGet = new QUdpSocket();
-    ////udpServerGet->bind(uport.toInt()+uport.toInt(), QUdpSocket::ShareAddress);
-    udpServerGet->bind(QHostAddress::AnyIPv4, 45454,
-                       QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
-    QObject::connect(udpServerGet,&QUdpSocket::readyRead,[&](){udpServerGetSlot(); });
+        multicastAddress = dizi.first().toObject()["multicastAddress"].toString();
+    else
+        multicastAddress = "239.255.0.11";
+
+    QHostAddress newGroup(multicastAddress);
+
     const QList<QNetworkInterface> interfaces = QNetworkInterface::allInterfaces();
 
     for (const QNetworkInterface &iface : interfaces)
@@ -79,16 +73,19 @@ void NewtworkProfil::multicastJoin()
         if (iface.flags().testFlag(QNetworkInterface::IsUp) &&
             iface.flags().testFlag(QNetworkInterface::IsRunning) &&
             iface.flags().testFlag(QNetworkInterface::CanMulticast) &&
-            !iface.humanReadableName().contains("lo"))
+            !iface.flags().testFlag(QNetworkInterface::IsLoopBack))
         {
-            bool ok = udpServerGet->joinMulticastGroup(group, iface);
-            qDebug() << "Multicast Join:" << iface.name() << ok;
+            // Eğer daha önce bir gruba katıldıysak çık
+            if (!currentGroup.isNull())
+                udpServerGet->leaveMulticastGroup(currentGroup, iface);
+
+            // Yeni gruba katıl
+            bool ok = udpServerGet->joinMulticastGroup(newGroup, iface);
+            qDebug() << "Multicast ReJoin:" << iface.name() << ok;
         }
     }
 
-    /***********************network multicast dinleniyor************************************/
-
-
+    currentGroup = newGroup;
 }
 
 NewtworkProfil::~NewtworkProfil()

@@ -111,6 +111,7 @@ private slots:
     bool networkProfilSaveStatus;
     QString multicastAddress;
     QNetworkConfigurationManager *networkConfigManager;
+    QHostAddress currentGroup;
 };
 
 #endif // NETWORKPROFIL_H
