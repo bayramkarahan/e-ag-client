@@ -308,7 +308,7 @@ void NewtworkProfil::networkProfilLoad()
     }
     //if(appendStatus){  networkProfilLoad();}
     //internet yoksa olur
-
+/*
     if(interfaceList.count()==0)
     {
         QJsonArray dizi=db->Ara("ipAddress","2222");
@@ -338,7 +338,7 @@ void NewtworkProfil::networkProfilLoad()
         }
 
     }
-
+*/
     //qDebug()<<"eagconf bilgileri farklı güncelleniyor.";
     ///system("systemctl restart e-ag-client-console.service");
 }

@@ -1,0 +1,136 @@
+#!/bin/bash
+# 🔐 Sadece izin verilen domain'lere internet erişimi sağlayan sistem
+# Kullanım:
+#   sudo ./allow-only.sh --init <domain1> [domain2 ...]
+#   sudo ./allow-only.sh --add <domain>
+#   sudo ./allow-only.sh --remove <domain>
+#   sudo ./allow-only.sh --list
+#
+# Gereksinimler: iptables, ipset, dig (dnsutils paketi)
+
+set -euo pipefail
+
+IPSET4="allowlist4"
+IPSET6="allowlist6"
+
+function create_ipsets() {
+    ipset list "$IPSET4" &>/dev/null || ipset create "$IPSET4" hash:ip
+    ipset list "$IPSET6" &>/dev/null || ipset create "$IPSET6" hash:ip family inet6
+}
+
+function allow_common_traffic() {
+    # DNS ve loopback trafiği
+    iptables -A OUTPUT -o lo -j ACCEPT 2>/dev/null || true
+    ip6tables -A OUTPUT -o lo -j ACCEPT 2>/dev/null || true
+    iptables -A OUTPUT -p udp --dport 53 -j ACCEPT 2>/dev/null || true
+    iptables -A OUTPUT -p tcp --dport 53 -j ACCEPT 2>/dev/null || true
+    ip6tables -A OUTPUT -p udp --dport 53 -j ACCEPT 2>/dev/null || true
+    ip6tables -A OUTPUT -p tcp --dport 53 -j ACCEPT 2>/dev/null || true
+}
+
+function add_domain() {
+    local DOMAIN="$1"
+    echo "🌐 DNS çözümleme: $DOMAIN"
+    local added=false
+
+    for ip in $(dig +short A "$DOMAIN"); do
+        [ -z "$ip" ] && continue
+        ipset add "$IPSET4" "$ip" -exist
+        echo "  ➕ IPv4 izin: $ip"
+        added=true
+    done
+    for ip6 in $(dig +short AAAA "$DOMAIN"); do
+        [ -z "$ip6" ] && continue
+        ipset add "$IPSET6" "$ip6" -exist
+        echo "  ➕ IPv6 izin: $ip6"
+        added=true
+    done
+
+    if [ "$added" = false ]; then
+        echo "⚠️  $DOMAIN için IP bulunamadı."
+    fi
+}
+
+function remove_domain() {
+    local DOMAIN="$1"
+    echo "🧹 $DOMAIN kaldırılıyor..."
+    for ip in $(dig +short A "$DOMAIN"); do
+        ipset del "$IPSET4" "$ip" 2>/dev/null || true
+    done
+    for ip6 in $(dig +short AAAA "$DOMAIN"); do
+        ipset del "$IPSET6" "$ip6" 2>/dev/null || true
+    done
+    echo "✅ $DOMAIN kaldırıldı."
+}
+
+function show_list() {
+    echo "📜 Şu anda izin verilen IP adresleri:"
+    echo "IPv4:"
+    ipset list "$IPSET4" 2>/dev/null || echo "(boş)"
+    echo ""
+    echo "IPv6:"
+    ipset list "$IPSET6" 2>/dev/null || echo "(boş)"
+}
+
+function init_rules() {
+    echo "🧹 Mevcut kurallar temizleniyor..."
+    iptables -P OUTPUT DROP
+    iptables -F OUTPUT
+    ip6tables -P OUTPUT DROP
+    ip6tables -F OUTPUT
+
+    create_ipsets
+    allow_common_traffic
+
+    # İzin verilen setlere 80/443 portlarını aç
+    iptables -A OUTPUT -m set --match-set "$IPSET4" dst -p tcp -m multiport --dports 80,443 -j ACCEPT
+    iptables -A OUTPUT -m set --match-set "$IPSET4" dst -p udp -m multiport --dports 80,443 -j ACCEPT
+    ip6tables -A OUTPUT -m set --match-set "$IPSET6" dst -p tcp -m multiport --dports 80,443 -j ACCEPT
+    ip6tables -A OUTPUT -m set --match-set "$IPSET6" dst -p udp -m multiport --dports 80,443 -j ACCEPT
+
+    for domain in "${@:1}"; do
+        add_domain "$domain"
+    done
+
+    echo "✅ Sistem yalnızca izin verilen domain'lere açık:"
+    printf "   %s\n" "${@:1}"
+}
+
+case "${1:-}" in
+    --init)
+        shift
+        if [ "$#" -lt 1 ]; then
+            echo "Kullanım: $0 --init <domain1> [domain2 ...]"
+            exit 1
+        fi
+        init_rules "$@"
+        ;;
+    --add)
+        shift
+        if [ "$#" -ne 1 ]; then
+            echo "Kullanım: $0 --add <domain>"
+            exit 1
+        fi
+        create_ipsets
+        add_domain "$1"
+        ;;
+    --remove)
+        shift
+        if [ "$#" -ne 1 ]; then
+            echo "Kullanım: $0 --remove <domain>"
+            exit 1
+        fi
+        remove_domain "$1"
+        ;;
+    --list)
+        show_list
+        ;;
+    *)
+        echo "Kullanım:"
+        echo "  $0 --init <domain1> [domain2 ...]   # sistemi başlatır ve sadece bu sitelere izin verir"
+        echo "  $0 --add <domain>                    # yeni site ekler"
+        echo "  $0 --remove <domain>                 # siteyi kaldırır"
+        echo "  $0 --list                            # mevcut izinleri listeler"
+        ;;
+esac
+

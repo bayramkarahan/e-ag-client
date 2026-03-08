@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# 1) X11 freeze
+xinput float "Virtual core keyboard" 2>/dev/null
+
+# 2) libinput kill
+for dev in /dev/input/event*; do
+    if grep -qi keyboard /sys$(udevadm info -q path -n "$dev")/device/name; then
+        chmod 000 "$dev"
+    fi
+done
+
+# 3) udev kuralları tetikle
+udevadm control --reload-rules
+udevadm trigger
+

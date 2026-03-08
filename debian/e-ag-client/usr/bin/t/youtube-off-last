@@ -1,0 +1,17 @@
+#!/bin/bash
+# YouTube engelleme döngüsü
+LOCK_FILE="/tmp/yt-block.lock"
+
+# Lock dosyasını oluştur
+touch "$LOCK_FILE"
+
+echo "🚫 YouTube engelleme döngüsü başlatıldı..."
+
+while [ -f "$LOCK_FILE" ]; do
+    echo "🧹 Engelleme scripti çalışıyor..."
+    /usr/bin/youtube-block
+    echo "⏱ 90 saniye bekleniyor..."
+    sleep 90
+done
+
+echo "✅ Engelleme döngüsü sonlandırıldı."
