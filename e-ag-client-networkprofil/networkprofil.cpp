@@ -48,6 +48,17 @@ NewtworkProfil::NewtworkProfil()
                 });
 
             });
+    /***************************-********************************************/
+    IPWatcher *watcher = new IPWatcher(this);
+
+    connect(watcher, &IPWatcher::ipChanged, this, [=](QStringList ips){
+        qDebug() << "Yeni IP’ler:" << ips;
+        multicastJoin();       // IP değişince multicast’i tekrar join et
+        networkProfilLoad();   // IP değişince network profil yükle
+        system("systemctl restart e-ag-client-console.service");
+    });
+    /************************************************************************/
+
     networkProfilLoad();
     multicastJoin();
 }

@@ -13,6 +13,7 @@
 #include<QFileSystemWatcher>
 #include <QNetworkConfigurationManager>
 #include <QThread>
+#include<ipwatcher.h>
 class IpMac
 {
 public:
