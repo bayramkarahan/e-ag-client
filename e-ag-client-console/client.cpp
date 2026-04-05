@@ -464,7 +464,7 @@ void Client::udpServerGetSlot()
                     sendJson["messagetype"]="sendfileclient";
                     sendJson["ip_address"] = item.ipAddress;
                     sendJson["mac_address"] = item.macAddress;
-                    sendJson["filename"] = consolehostname+"-"+item.ipAddress+ad;
+                    sendJson["filename"] = consolehostname+"-"+item.ipAddress+"-"+ad;
                     QByteArray datagram = QJsonDocument(sendJson).toJson(QJsonDocument::Compact);
                     udpServerSend->writeDatagram(datagram,QHostAddress(item.serverAddress), item.networkTcpPort.toInt());
                     ///qDebug()<<msg<<networkTcpPort;
