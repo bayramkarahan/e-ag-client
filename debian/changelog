@@ -1,3 +1,10 @@
+e-ag-client (2.9.7) unstable; urgency=medium
+
+  * get file and delete
+  * select pc updated
+  * pc select updated
+  * keyring first user hide
+
 e-ag-client (2.9.6) unstable; urgency=medium
 
   * get workfile

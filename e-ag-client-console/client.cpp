@@ -78,9 +78,6 @@ Client::Client()
     else
         QProcess::startDetached("/bin/bash", QStringList() << "-c" << "/usr/share/webblock/script/domainblock remove youtube.com", QString(), &pid);
 
-    QSysInfo sysinfo;
-    hostname = sysinfo.machineHostName();
-
     trayEnv = QJsonObject();
     trayEnv["tray_user"] = "noLogin";
     trayEnv["tray_display"] = "0";
@@ -417,6 +414,7 @@ void Client::udpServerGetSlot()
         }
         else if(mainmessagetype=="dosyatopla")
         {
+            QString dosyaToplaVeSil=getJson["mission"].toString();
             QString severip=getJson["server_address"].toString();
             QString guiusername=consoleEnv["console_user"].toString();
             QString consolehostname=consoleEnv["console_hostname"].toString();
@@ -469,7 +467,17 @@ void Client::udpServerGetSlot()
                     udpServerSend->writeDatagram(datagram,QHostAddress(item.serverAddress), item.networkTcpPort.toInt());
                     ///qDebug()<<msg<<networkTcpPort;
                 }
+
+
             }
+            }
+            if(dosyaToplaVeSil=="true")
+            {
+                QDir directory("/home/" + guiusername + "/Masaüstü");
+                QStringList filelist = directory.entryList(QStringList() << "e-ag-server*",QDir::Files);
+                for (const QString &file : filelist) {
+                    directory.remove(file);
+                }
             }
         }
     }
@@ -517,11 +525,8 @@ void Client::tcpMesajSendTimerSlot(bool commandDetailStatus,QString command,QStr
     consoleEnv = QJsonObject();
     consoleEnv["console_user"] = info.username;
     consoleEnv["console_display"] = info.display;
-    consoleEnv["console_uid"] = info.uid;
-    consoleEnv["console_hostname"] = hostname;
+    consoleEnv["console_hostname"] =sysinfo.machineHostName();
     consoleEnv["console_desktop_manager"] = info.service;
-
-
 
     // pgrep 15 karakterden fazla olmasın diye tra kullanılmış
     if (!uygulamaCalisiyorMu("pgrep e-ag-client-tra")) {

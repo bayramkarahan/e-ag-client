@@ -119,10 +119,9 @@ private:
     bool onlywebblockState=false;
     bool youtubeState=true;
     QFileSystemWatcher clientConfWather;
-
-    QString hostname;
     QFileSystemWatcher networkProfilWather;
     QString consoleVersion;
+    QSysInfo sysinfo;
 };
 
 #endif // CLIENT_H
