@@ -445,7 +445,7 @@ void Client::udpServerGetSlot()
                 // system(komut.toStdString().c_str());
                 qDebug()<<"komut: "<<komut;
                 qDebug()<<"kopayalanacak gercekad: "<<gercekad<<"kopayalanacak ad: "<<ad;
-                qDebug()<<"yeni dosya adı: "<<consolehostname+"-"+item.ipAddress+ad;
+                qDebug()<<"yeni dosya adı: "<<consolehostname+"-"+item.ipAddress+"-"+ad;
                 qDebug()<<"guiusername: "<<guiusername;
                 QStringList arguments;
                 arguments << "-c" << komut;
@@ -473,11 +473,11 @@ void Client::udpServerGetSlot()
             }
             if(dosyaToplaVeSil=="true")
             {
-                QDir directory("/home/" + guiusername + "/Masaüstü");
-                QStringList filelist = directory.entryList(QStringList() << "e-ag-server*",QDir::Files);
-                for (const QString &file : filelist) {
-                    directory.remove(file);
-                }
+                qDebug()<<"çalışmalar Silinecek....";
+                QString path = "/home/" + guiusername + "/Masaüstü/e-ag-server-*";
+                QString komut1 = "rm -rf " + path;
+                //qDebug()<<"komut"<<komut1;
+                system(komut1.toStdString().c_str());
             }
         }
     }
