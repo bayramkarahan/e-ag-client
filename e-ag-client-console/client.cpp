@@ -480,6 +480,67 @@ void Client::udpServerGetSlot()
                 system(komut1.toStdString().c_str());
             }
         }
+        else if(mainmessagetype=="dosyatoplauzanti")
+        {
+            QString toplanacakuzanti=getJson["mission"].toString();
+            QString severip=getJson["server_address"].toString();
+            QString guiusername=consoleEnv["console_user"].toString();
+            QString consolehostname=consoleEnv["console_hostname"].toString();
+            hostAddressMacButtonSlot();//local ip adresi tespit ediliyor.
+
+            QDir directory("/home/"+guiusername+"/Masaüstü");
+            QStringList filelist = directory.entryList(QStringList() << toplanacakuzanti,QDir::Files);
+            QString ad="";
+            QString gercekad="";
+            foreach(QString filename, filelist) {
+                QFileInfo fi(filename);
+                ad=fi.fileName();
+                QString uzanti = fi.completeSuffix();
+                gercekad="/home/"+guiusername+"/Masaüstü\/"+filename;
+                /*if(uzanti!="")
+                    ad="-e-ag-server."+uzanti;
+                else
+                    ad="-e-ag-server";*/
+                qDebug()<<"dosyalar"<<filename<<gercekad<<ad;
+
+            qDebug()<<"dosyalar"<<gercekad<<ad;
+
+            for (const NetProfil &item : NetProfilList) {
+                if (item.serverAddress=="") continue;
+                if (item.selectedNetworkProfil==false) continue;
+
+                QString komut="/usr/bin/scd-client "+severip+" 12345 PUT "+gercekad+" /"+consolehostname+"-"+item.ipAddress+"-"+ad;
+                // system(komut.toStdString().c_str());
+                qDebug()<<"komut: "<<komut;
+                qDebug()<<"kopayalanacak gercekad: "<<gercekad<<"kopayalanacak ad: "<<ad;
+                qDebug()<<"yeni dosya adı: "<<consolehostname+"-"+item.ipAddress+"-"+ad;
+                qDebug()<<"guiusername: "<<guiusername;
+                QStringList arguments;
+                arguments << "-c" << komut;
+                QProcess process;
+                process.start("/bin/bash",arguments);
+                process.waitForFinished(-1); // will wait forever until finished
+
+                if(item.networkBroadCastAddress!=""&&
+                    item.serverAddress.section(".",0,1)==item.networkBroadCastAddress.section(".",0,1)&&
+                    item.serverAddress.section(".",0,1)==item.ipAddress.section(".",0,1))
+                {
+                    // mainJson kopyasını al
+                    QJsonObject sendJson;
+                    sendJson["messagetype"]="sendfileclient";
+                    sendJson["ip_address"] = item.ipAddress;
+                    sendJson["mac_address"] = item.macAddress;
+                    sendJson["filename"] = consolehostname+"-"+item.ipAddress+"-"+ad;
+                    QByteArray datagram = QJsonDocument(sendJson).toJson(QJsonDocument::Compact);
+                    udpServerSend->writeDatagram(datagram,QHostAddress(item.serverAddress), item.networkTcpPort.toInt());
+                    ///qDebug()<<msg<<networkTcpPort;
+                }
+
+
+            }
+            }
+
+        }
     }
     udpServerGetStatus=false;
 }
